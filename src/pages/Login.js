@@ -1,47 +1,48 @@
-import {Box, Button, TexFiel} from "@miu/material";
+import {Box, Button, TextField} from  "@mui/material"
+import { where, query,collection,getDocs,  } from "firebase/firestore";
 import { useRef } from "react";
-import { db } from "firebase";
-import {collection,query,where,getDocs} from "firebase/firestore"
+import { db } from "../firebase";
+import { useNavigate } from "react-router-dom";
 
+export default function Login() {
+    const email = useRef("");
+    const password = useRef("")
+    const usersRef = collection(db, 'users ');
+    const navigate = useNavigate();
+    const login = async (e) => {
+        e.preventDefault();
+        const search = query(usersRef, where('email', '==', email.current.value))
+        const result = await getDocs(search);
+        if (result.docs.lenght > 0 ){
+            const user = result.docs[0].data()
+            const user_id = result.docs[0].id
+            if (user.password === password.current.value){
+                console.log("login success")
+                console.log("redirect")
+                
+                localStorage.setItem('user_loged', JSON.stringify(user_id));
+                navigate('/dashboard', {replace: true});
+                
+            }else{
+                console.log("login failure")
+            }
+        } else {
+            alert("No User Found! Please Sign")
+            }
+            }
+        
+    ;
 
-
-export default function Login () {
-    const email = useRef();
-    const password = useRef();
-    const usersRef = collection(db,'users');
-
-
-const Login = async (e) =>{
-    e.preventDefaul();
-    console.log(email.currrent.value, password.current.value)
-    const search = query(usersRef, where("email", "==", email.current.value ))
-
-    const result = await getDocs(search);
-    console.log(result.docs.length)
-    if (result.docs.length > 0) {
-        const user =result.docs[0].data()
-        if (user.password === password.current.value) {
-            console.log("login success")
-            console.log("Redirect")
-
-        }else{
-            console.log("User not found")
-        }
-    }
-
-}
-    return (
+    return(
         <>
-        <div>
             <h1>Login</h1>
-        </div>
-        < Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-        <TexFiel label="Email" className={"w-full my-4"}variant="outlined" type="email"/>
-        <TexFiel label="Password" className={"w-full my-4"} variant="outlined" type="password"/>
-        <Button type="submit" variant="contained">Login</Button>
+       
+        <Box component="form" onSubmit={login} sx= {{p:2, border:'1px dashed grey'}}>
+                <TextField label="Email" inputRef={email} className="my-custom-class" ></TextField>
+                <TextField label="Password" inputRef={password}></TextField>
+                <Button type="submit" variant="contained">Login</Button>
+                
         </Box>
         </>
-        
-
-    );
-}
+    )
+};
