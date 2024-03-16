@@ -35,7 +35,7 @@ export default function Login() {
 
     return(
         <>
-            <h1>Login</h1>
+            <h2>Login</h2>
        
         <Box component="form" onSubmit={login} sx= {{p:2, border:'1px dashed grey'}}>
                 <TextField label="Email" inputRef={email} className="my-custom-class" ></TextField>
