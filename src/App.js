@@ -3,11 +3,10 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import AddFlat from "./pages/AddFlat";
 import Profile from "./pages/Profile";
-
 import Register from "./pages/Register";
 import ProfileUpdate from "./pages/ProfileUpdate";
 import Flats from "./pages/Flats";
-import MyFlast from "./pages/MyFlast";
+import MyFlats from "./pages/MyFlats";
 function App() {
   return (
     <Routes>
@@ -18,7 +17,9 @@ function App() {
       <Route path={"/profile"} element={<Profile />} />
       <Route path={"/profile/edit"} element={<ProfileUpdate />} />
       <Route path={"/register"} element={<Register />} />
-      <Route path={"/my-flast"} element={<MyFlast />} />
+      <Route path={"/my-flast"} element={<MyFlats />} />
+      
+
     </Routes>
   );
 }
