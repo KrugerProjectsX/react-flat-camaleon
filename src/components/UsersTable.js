@@ -11,24 +11,12 @@ import { db } from "../firebase";
 
 
 // @Params: type: "my-flats" | "all-flats" | "favorite-flats"
-export default function FlatsTable({ type }) {
+export default function FlatsTable() {
     const ref = collection(db, "flats");
     const userId = JSON.parse(localStorage.getItem('user_logged'));
     const [flats, setFlats] = useState([]);
 
     const getData = async () => {
-        if (type === 'my-flats') {
-            const search = query(ref, where("user", "==", userId));
-            const data = await getDocs(search);
-            const rows = data.docs.map((item) => {
-                return { ...item.data(), id: item.id }
-            });
-
-            setFlats(rows);
-        }
-        if (type === 'all-flats') {
-            
-        }
         
     }
 
