@@ -1,7 +1,7 @@
 import React from 'react'
 
-export default function Myflats() {
+export default function MyFlats() {
   return (
-    <div>Myflats</div>
+    <div>MyFlats</div>
   )
 }

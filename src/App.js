@@ -7,7 +7,7 @@ import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import ProfileUpdate from "./pages/ProfileUpdate";
 import Flats from "./pages/Flats";
-import Myflats from "./pages/Myflats";
+import MyFlast from "./pages/MyFlast";
 function App() {
   return (
     <Routes>
@@ -18,7 +18,7 @@ function App() {
       <Route path={"/profile"} element={<Profile />} />
       <Route path={"/profile/edit"} element={<ProfileUpdate />} />
       <Route path={"/register"} element={<Register />} />
-      <Route path={"/my-flast"} element={<Myflats />} />
+      <Route path={"/my-flast"} element={<MyFlast />} />
     </Routes>
   );
 }
