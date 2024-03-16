@@ -42,7 +42,7 @@ export default function UserForm({ type }) {
     }
     useEffect(() => {
         processData();
-    }, [])
+    },[] ) 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
