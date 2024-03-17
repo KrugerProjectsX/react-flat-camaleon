@@ -22,7 +22,7 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app)
 
 
-//TODO: @David Morales
+//TODO: @David Morales Firebase 1
 /* 
 apiKey: "AIzaSyDuFBLNbw4Jws704R3w_svUA4thB2xxJRA",
   authDomain: "flats-kamaleon.firebaseapp.com",
@@ -32,7 +32,7 @@ apiKey: "AIzaSyDuFBLNbw4Jws704R3w_svUA4thB2xxJRA",
   appId: "1:381918019528:web:9ab7149392b5ffba3e4afd",
   measurementId: "G-DG3XKQPVGF" */
 
-//TODO: @Sandra Inacaza
+//TODO: @Sandra Inacaza Firebase 2
 
   /* apiKey: "AIzaSyB2A5Jz_s3zEl0f4MrKGrQpSdrG-gTnTX8",
   authDomain: "flat-camaleon.firebaseapp.com",
