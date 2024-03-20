@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -6,96 +5,61 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import { useEffect } from 'react';
-import { collection, getDoc ,where, query  } from 'firebase/firestore';
+import { useEffect, useState } from "react";
+import { getDocs, query, where, collection } from "firebase/firestore";
 import { db } from "../firebase";
 
 
+// @Params: type: "my-flats" | "all-flats" | "favorite-flats"
+export default function FlatsTable({ type }) {
+    const ref = collection(db, "flats");
+    const userId = JSON.parse(localStorage.getItem('user_logged'));
+    const [flats, setFlats] = useState([]);
 
-function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
-  }
-  
-  const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-  ];
+    const getData = async () => {
+        if (type === 'my-flats') {
+            const search = query(ref, where("user", "==", userId));
+            const data = await getDocs(search);
+            const rows = data.docs.map((item) => {
+                return { ...item.data(), id: item.id }
+            });
 
-  // @Parames: type: 
-
-export default function FlatsTable({type}) {
-
-    const ref = collection(db,"flats")
-    const  userId = JSON.parse(localStorage.getItem('user_logged'))
-    const getData = async()=>{
-        if(type=== 'my-flats'){
-            //fetch my flats
-    
-    
+            setFlats(rows);
         }
-        if(type=== 'my-flats'){
-            //fetch my flats
-    
-    
-        }
-        if(type=== 'my-flats'){
-            //fetch my flats
+        if (type === 'all-flats') {
             
-            const search = query(ref, where('user', '==', userId.current.value))
-            const data = await getDoc(search)
-            const row = data.docs.map((item)=>{
-                return {...item.data(), id: item.id};
-
-            })
-
-            console.log(row)
-        
         }
+        
     }
-    useEffect(()=>{
 
+    useEffect(() => {
+        getData();
+    }, []);
 
-    })
-
-
-
-
-  return (
-    <>
-        <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Dessert (100g serving)</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow
-              key={row.name}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-              <TableCell align="right">{row.protein}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-    </>
-    
-  )
+    return (
+        <TableContainer>
+            <Table className="min-w-full divide-y divide-gray-200" aria-label="simple table">
+                <TableHead className="bg-gray-50">
+                    <TableRow>
+                        <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">City</TableCell>
+                        <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">Area size</TableCell>
+                        <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">Rent price</TableCell>
+                        <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">Has AC</TableCell>
+                        <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">Date available</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody className="bg-white divide-y divide-gray-200">
+                    {flats.map((row) => (
+                        <TableRow key={row.id}>
+                            <TableCell className="px-6 py-4 whitespace-nowrap">{row.city}</TableCell>
+                            <TableCell className="px-6 py-4 whitespace-nowrap" >{row.areaSize}</TableCell>
+                            <TableCell className="px-6 py-4 whitespace-nowrap" >{row.rentPrice}</TableCell>
+                            <TableCell className="px-6 py-4 whitespace-nowrap" >{row.hasAc ? 'Yes' : 'No'}</TableCell>
+                            <TableCell className="px-6 py-4 whitespace-nowrap" >{row.dateAvailable}</TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
+    );
 }

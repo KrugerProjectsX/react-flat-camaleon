@@ -3,12 +3,15 @@ import { useEffect, useRef, useState } from "react";
 import {doc, updateDoc, getDoc, collection, addDoc} from "firebase/firestore";
 import { db } from "../firebase";
 
+
 export default function UserForm({ type }) {
+    const currentDate = new Date().toJSON().slice(0, 10);
+
     const [user, setUser] = useState({
         firstName: '',
         lastName: '',
         email: '',
-        birthDate: ''
+        birthDate: currentDate
     });
     const [userLoaded, setUserLoaded] = useState(false);
     const firstNameRef = useRef('');
@@ -18,8 +21,11 @@ export default function UserForm({ type }) {
     const birthDateRef = useRef('');
     const id = JSON.parse(localStorage.getItem('user_logged'));
     const refCreate = collection(db, "users");
-    const ref = doc(db, "users", id);
-    const currentDate = new Date().toJSON().slice(0, 10);
+    let ref = null;
+    if (id){
+         ref = doc(db, "users", id);
+    }
+    
     const today = new Date();
     const minBirthDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate()).toISOString().split('T')[0];
     const maxBirthDate = new Date(today.getFullYear() - 120, today.getMonth(), today.getDate()).toISOString().split('T')[0];
@@ -54,7 +60,7 @@ export default function UserForm({ type }) {
             birthDate: birthDateRef.current.value,
         }
         if (type === 'create') {
-            userSend = { ...userSend, password: passwordRef.current.value }
+            userSend = { ...userSend, password: passwordRef.current.value, role: 'guest' }
             await addDoc(refCreate, userSend);
             
         }
@@ -72,7 +78,7 @@ export default function UserForm({ type }) {
                     <TextField disabled={type === 'view'} label="Last Name" inputRef={lastNameRef} defaultValue={user.lastName} variant='outlined' className="mb-4 w-full" />
                     <TextField disabled={type === 'view'} type='email' label='Email' inputRef={emailRef} defaultValue={user.email} variant='outlined' className="mb-4 w-full" />
                     {type === 'create' && <TextField type={'password'} label='Password' inputRef={passwordRef} variant='outlined' className="mb-4 w-full" />}
-                    <TextField disabled={type === 'view'} label='Birth Date' type='date' inputRef={birthDateRef} inputProps={{ min: maxBirthDate, max: minBirthDate }} defaultValue={currentDate} variant='outlined' className="mb-4 w-full" />
+                    <TextField disabled={type === 'view'} label='Birth Date' type='date' inputRef={birthDateRef} inputProps={{ min: maxBirthDate, max: minBirthDate }} defaultValue={user.birthDate} variant='outlined' className="mb-4 w-full" />
                     {type !== 'view' && <Button type='submit' className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">{nameButton}</Button>}
                 </>
             ) : (
