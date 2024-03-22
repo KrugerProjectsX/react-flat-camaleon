@@ -50,55 +50,60 @@ export default function Login() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
-            <Box
-                component="form"
-                onSubmit={handleLogin}
-                sx={{
-                    p: 2,
-                    border: '1px solid #ccc',
-                    borderRadius: '5px',
-                    maxWidth: '300px',
-                    backgroundColor: 'white'
-                }}
-            >
-                <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold text-gray-800">Login</h1>
-                </div>
-                <TextField
-                    label="Email"
-                    inputRef={emailRef}
-                    fullWidth
-                    variant="outlined"
-                    type="email"
-                    className="mb-4"
-                />
-                <TextField
-                    label="Password"
-                    inputRef={passwordRef}
-                    fullWidth
-                    variant="outlined"
-                    type="password"
-                    className="mb-4"
-                />
-                <Button
-                    type="submit"
-                    disabled={isProgress}
-                    fullWidth
-                    variant="contained"
-                    className="mb-4"
-                    sx={{ backgroundColor: '#4CAF50', color: 'white' }}
+
+        <>
+            
+            <div className="min-h-screen flex items-center justify-center bg-gray-100">
+                <Box
+                    component="form"
+                    onSubmit={handleLogin}
+                    sx={{
+                        p: 2,
+                        border: '1px solid #ccc',
+                        borderRadius: '5px',
+                        maxWidth: '300px',
+                        backgroundColor: 'white'
+                    }}
                 >
-                    {isProgress ? 'Iniciando sesión...' : 'Iniciar sesión'}
-                </Button>
-            </Box>
-            <Snackbar
-                open={Boolean(errorAlert)}
-                autoHideDuration={6000}
-                onClose={handleCloseAlert}
-                message={errorAlert}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-            />
-        </div>
+                    <div className="text-center mb-8">
+                        <h1 className="text-2xl font-bold text-gray-800">Login</h1>
+                    </div>
+                    <TextField
+                        label="Email"
+                        inputRef={emailRef}
+                        fullWidth
+                        variant="outlined"
+                        type="email"
+                        className="mb-4"
+                    />
+                    <TextField
+                        label="Password"
+                        inputRef={passwordRef}
+                        fullWidth
+                        variant="outlined"
+                        type="password"
+                        className="mb-4"
+                    />
+                    <Button
+                        type="submit"
+                        disabled={isProgress}
+                        fullWidth
+                        variant="contained"
+                        className="mb-4"
+                        sx={{ backgroundColor: '#4CAF50', color: 'white' }}
+                    >
+                        {isProgress ? 'Iniciando sesión...' : 'Iniciar sesión'}
+                    </Button>
+                </Box>
+                <Snackbar
+                    open={Boolean(errorAlert)}
+                    autoHideDuration={6000}
+                    onClose={handleCloseAlert}
+                    message={errorAlert}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                />
+            </div>
+        </>
+
     );
 }

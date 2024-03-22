@@ -16,7 +16,6 @@ export default function UsersTable() {
     const refFlats = collection(db, "flats");
     const [userType,setUserType] = useState('');
     const [flatsCounter,setFlatsCounter] = useState('');
-    const [isAdmin,setIsAdmin] = useState('');
     const [valueSlider, setValueSlider] = React.useState([18, 120]);
 
     const [users, setUsers] = useState([]);
@@ -28,14 +27,7 @@ export default function UsersTable() {
         if (userType){
             arrayWhere.push(where("role", "==", userType));
         }
-        if (isAdmin && isAdmin === "Yes"){
-            arrayWhere.push( where("role", "==", "admin"));
-            
-        }
-        if (isAdmin && isAdmin === "No"){
-            arrayWhere.push( where("role", "==", "guest"));
-
-        }
+        
         const today = new Date();
         const minBirthDate = new Date(today.getFullYear() - valueSlider[0], today.getMonth(), today.getDate()).toISOString().split('T')[0];
         const maxBirthDate = new Date(today.getFullYear() - valueSlider[1], today.getMonth(), today.getDate()).toISOString().split('T')[0];
@@ -45,9 +37,7 @@ export default function UsersTable() {
         }
      
         const searchUser = query(ref, ...arrayWhere);
-        
-        
-        console.log(arrayWhere)
+
         const data = await getDocs(searchUser);
         const usersSet = []; // Conjunto para almacenar usuarios únicos
 
@@ -55,16 +45,35 @@ export default function UsersTable() {
         for (const item of data.docs) {
             const search = query(refFlats, where("user", "==", item.id));
             const dataFlats = await getDocs(search);
+            
+            if (flatsCounter){
+                const flatsValue = flatsCounter.split('-');
+                if(flatsValue.length > 1){
+                    const min = flatsValue[0];
+                    const max = flatsValue[1];
+                    if (dataFlats.docs?.length < min || dataFlats.docs?.length > max){
+                        continue;
+                    }
+                }else{
+                    if(flatsValue[0] ==='61+'){
+                        if (dataFlats.docs?.length < 61){
+                            continue;
+                        }
+                    }
+                }
+                
+            }
             const userWithFlats = {...item.data(), id: item.id, flats: dataFlats.docs?.length};
+            
             usersSet.push(userWithFlats);
         }
-        console.log(usersSet)
+
         setUsers(usersSet);
     };
 
     useEffect(() => {
         getData();
-    }, [userType,flatsCounter,isAdmin,valueSlider]);
+    }, [userType,flatsCounter,valueSlider]);
 
     return (
         <>
@@ -80,8 +89,9 @@ export default function UsersTable() {
                         onChange={(e)=> setUserType(e.target.value)}
                     >
                         <option key="none" value=""></option>
-                        <option key="landlords" value="landlords">Landlords</option>
-                        <option key="renters" value="renters">Renters</option>
+                        <option key="landlord" value="landlord">Landlords</option>
+                        <option key="renter" value="renter">Renters</option>
+                        <option key="admin" value="admin">Admins</option>
                     </TextField>
 
                     <TextField
@@ -99,21 +109,7 @@ export default function UsersTable() {
                         <option key="21-60" value="21-60">21-60</option>
                         <option key="61+" value="61+">61+</option>
                     </TextField>
-
-                    <TextField
-                        select
-                        label="Is Admin"
-                        variant="outlined"
-                        SelectProps={{ native: true }}
-                        className="w-28"
-                        value={isAdmin}
-                        onChange={(e)=> setIsAdmin(e.target.value)}
-                        
-                    >
-                        <option key="none" value=""></option>
-                        <option key="No" value="No">No</option>
-                        <option key="Yes" value="Yes">Yes</option>
-                    </TextField>
+                    
                 </div>
                 <div className={'w-full'}>
                     <Typography id="input-slider" gutterBottom>
