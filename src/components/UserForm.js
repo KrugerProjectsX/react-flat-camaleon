@@ -2,6 +2,7 @@ import { Box, Button, TextField } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import {doc, updateDoc, getDoc, collection, addDoc} from "firebase/firestore";
 import { db } from "../firebase";
+import * as React from "react";
 
 
 export default function UserForm({ type }) {
@@ -19,6 +20,7 @@ export default function UserForm({ type }) {
     const emailRef = useRef('');
     const passwordRef = useRef('');
     const birthDateRef = useRef('');
+    const userTypeRef = useRef('landlords');
     const id = JSON.parse(localStorage.getItem('user_logged'));
     const refCreate = collection(db, "users");
     let ref = null;
@@ -58,9 +60,11 @@ export default function UserForm({ type }) {
             lastName: lastNameRef.current.value,
             email: emailRef.current.value,
             birthDate: birthDateRef.current.value,
+            role: userTypeRef.current.value
         }
+        
         if (type === 'create') {
-            userSend = { ...userSend, password: passwordRef.current.value, role: 'guest' }
+            userSend = { ...userSend, password: passwordRef.current.value }
             await addDoc(refCreate, userSend);
             
         }
@@ -79,7 +83,19 @@ export default function UserForm({ type }) {
                     <TextField disabled={type === 'view'} type='email' label='Email' inputRef={emailRef} defaultValue={user.email} variant='outlined' className="mb-4 w-full" />
                     {type === 'create' && <TextField type={'password'} label='Password' inputRef={passwordRef} variant='outlined' className="mb-4 w-full" />}
                     <TextField disabled={type === 'view'} label='Birth Date' type='date' inputRef={birthDateRef} inputProps={{ min: maxBirthDate, max: minBirthDate }} defaultValue={user.birthDate} variant='outlined' className="mb-4 w-full" />
+                    <TextField
+                        select
+                        label="User Type"
+                        variant="outlined"
+                        SelectProps={{ native: true }}
+                        className="w-full mb-5"
+                        inputRef={userTypeRef}
+                    >
+                        <option key="landlord" value="landlord">landlord</option>
+                        <option key="renter" value="renter">renter</option>
+                    </TextField>
                     {type !== 'view' && <Button type='submit' className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">{nameButton}</Button>}
+                    
                 </>
             ) : (
                 <p>Loading...</p>

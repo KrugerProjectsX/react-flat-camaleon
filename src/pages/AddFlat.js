@@ -1,7 +1,17 @@
+import FlatForm from "../components/FlatForm";
+import Header from "../components/Header";
+
 export default function AddFlat() {
+
     return (
-        <div>
-            <h1>Home</h1>
-        </div>
+        <>
+            <Header/>
+            <div>
+                <h1>Add Flat</h1>
+            </div>
+            <div>
+                <FlatForm />
+            </div>
+        </>
     );
 }
