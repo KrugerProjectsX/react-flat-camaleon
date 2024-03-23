@@ -1,14 +1,13 @@
-import React from 'react'
-import UserFrom from '../components/UserForm'
+import UserForm from "../components/UserForm";
+import Header from "../components/Header";
 
 export default function Profile() {
-  return (
-    <>
-        <div>Profile</div>
-        <UserFrom />
     
-    </>
-    
-    
-  )
+    return (
+        <div>
+            <Header/>
+            <h1>Profile</h1>
+            <UserForm type={'view'}/>
+        </div>
+    );
 }
