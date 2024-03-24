@@ -73,7 +73,7 @@ export default function UserForm({ type }) {
             await updateDoc(ref, userSend);
         }
     }
-    console.log(user)
+    console.log(user);
     return (
         <Box component={'form'} onSubmit={handleSubmit} className="max-w-md mx-auto p-4 border rounded">
             {userLoaded ? (
