@@ -1,19 +1,20 @@
 import { Box, Button, TextField } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
-import { doc, updateDoc, getDoc, collection, addDoc, addDocs, where, query, getDocs } from "firebase/firestore";
+import { doc, updateDoc, getDoc, collection, addDoc, where, query, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 import * as React from "react";
-
+import { useNavigate } from "react-router-dom";
 
 export default function UserForm({ type }) {
     const currentDate = new Date().toJSON().slice(0, 10);
-
+    const navigate = useNavigate();
     const [user, setUser] = useState({
         firstName: '',
         lastName: '',
         email: '',
         birthDate: currentDate
     });
+
     const [userLoaded, setUserLoaded] = useState(false);
     const firstNameRef = useRef('');
     const lastNameRef = useRef('');
@@ -40,15 +41,17 @@ export default function UserForm({ type }) {
         const responseUser = { ...dataUser.data() };
         setUser(responseUser);
         setUserLoaded(true);
-    }
+    };
+
     const processData = async () => {
         if (type === 'view' || type === 'update') {
             await getUserData();
         } else {
             setUserLoaded(true);
         }
-    }
-    useEffect(() => {
+    };
+
+     useEffect(() => {
         processData();
     }, [])
 
@@ -81,6 +84,28 @@ export default function UserForm({ type }) {
                     userSend = { ...userSend, password: passwordRef.current.value };
                     await addDoc(refCreate, userSend);
                     console.log('Usuario creado exitosamente');
+
+                    //Login
+                    /* const user = querySnapshot.docs[0].data();
+                    const userId = querySnapshot.docs[0].id;
+                    console.log(user);
+                    console.log(userId); */
+
+                    try {
+                        // Consulta para buscar usuarios con el mismo correo electrónico
+                        console.log(userSend)
+                        /* const passwordUser = userSend.password;
+                        const emailUser = userSend.email; */
+                        const querySnapshot = await getDocs(query(refCreate, where('email', '==', userSend.email)));
+                        //Si va todo bien con el registro se va directo al dashboard
+                        const userId = querySnapshot.docs[0].id;
+                        console.log("Login success",userId);
+                        localStorage.setItem('user_logged', JSON.stringify(userId));
+                        navigate('../pages/dashboard', { replace: true });
+                        return;
+                    } catch (error) {
+                        console.error('Error al realizar el login',error)
+                    }
                 }
             } catch (error) {
                 console.error('Error al verificar el correo electrónico:', error);
