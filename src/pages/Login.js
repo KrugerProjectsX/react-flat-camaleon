@@ -15,10 +15,8 @@ export default function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
         setIsProgress(true);
-
         const emailValue = emailRef.current.value;
         const passwordValue = passwordRef.current.value;
-
         try {
             const querySnapshot = await getDocs(query(usersRef, where("email", "==", emailValue)));
             if (!querySnapshot.empty) {
@@ -52,7 +50,7 @@ export default function Login() {
     return (
 
         <>
-            
+
             <div className="min-h-screen flex items-center justify-center bg-gray-100">
                 <Box
                     component="form"
