@@ -3,6 +3,9 @@ import { useRef, useState } from "react";
 import { db } from "../firebase";
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { useNavigate } from "react-router-dom";
+import { LockOutlined as LockOutlinedIcon } from "@mui/icons-material";
+import {EmailOutlined as EmailOutlinedIcon} from '@mui/icons-material';
+
 
 export default function Login() {
     const emailRef = useRef("");
@@ -66,6 +69,7 @@ export default function Login() {
                     <div className="text-center mb-8">
                         <h1 className="text-2xl font-bold text-gray-800">Login</h1>
                     </div>
+                    <EmailOutlinedIcon></EmailOutlinedIcon>
                     <TextField
                         label="Email"
                         inputRef={emailRef}
@@ -74,6 +78,7 @@ export default function Login() {
                         type="email"
                         className="mb-4"
                     />
+                    <LockOutlinedIcon></LockOutlinedIcon>
                     <TextField
                         label="Password"
                         inputRef={passwordRef}
@@ -92,6 +97,10 @@ export default function Login() {
                     >
                         {isProgress ? 'Iniciando sesión...' : 'Iniciar sesión'}
                     </Button>
+                    <p> Don't have an account?
+                <a href="#"> Register </a>
+            </p>
+
                 </Box>
                 <Snackbar
                     open={Boolean(errorAlert)}
