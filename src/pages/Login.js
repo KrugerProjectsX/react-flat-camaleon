@@ -3,18 +3,41 @@ import { useRef, useState } from "react";
 import { db } from "../firebase";
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { useNavigate } from "react-router-dom";
+import { LockOutlined as LockOutlinedIcon } from "@mui/icons-material";
+import {EmailOutlined as EmailOutlinedIcon} from '@mui/icons-material';
+
 
 export default function Login() {
     const emailRef = useRef("");
     const passwordRef = useRef("");
     const usersRef = collection(db, 'users');
     const navigate = useNavigate();
+   
     const [isProgress, setIsProgress] = useState(false);
+    
+    const [email, setEmail] = useState("");
     const [errorAlert, setErrorAlert] = useState(null);
+    const validateEmailRef =(email) => {
+        const regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+        return regex.test(email);
+    }
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setIsProgress(true);
+    
+        if (validateEmailRef (email)) {
+            setErrorAlert({
+                error:false,
+                message: "",
+            });
+            console.log("Email correcto");
+        } else {
+            setErrorAlert ({
+                error: true,
+                message: "Formato de email incorrecto"
+            }) 
+        }
 
         const emailValue = emailRef.current.value;
         const passwordValue = passwordRef.current.value;
@@ -51,6 +74,7 @@ export default function Login() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
+           
             <Box
                 component="form"
                 onSubmit={handleLogin}
@@ -61,22 +85,33 @@ export default function Login() {
                     maxWidth: '300px',
                     backgroundColor: 'white'
                 }}
+                
             >
                 <div className="text-center mb-8">
                     <h1 className="text-2xl font-bold text-gray-800">Login</h1>
+                                        
                 </div>
+                <EmailOutlinedIcon></EmailOutlinedIcon>
                 <TextField
+                    id="email"
                     label="Email"
                     inputRef={emailRef}
                     fullWidth
+                    required
                     variant="outlined"
                     type="email"
                     className="mb-4"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  
+                   
                 />
+               <LockOutlinedIcon></LockOutlinedIcon>
                 <TextField
                     label="Password"
                     inputRef={passwordRef}
                     fullWidth
+                    required
                     variant="outlined"
                     type="password"
                     className="mb-4"
@@ -85,12 +120,15 @@ export default function Login() {
                     type="submit"
                     disabled={isProgress}
                     fullWidth
-                    variant="contained"
+                    variant="outline"
                     className="mb-4"
                     sx={{ backgroundColor: '#4CAF50', color: 'white' }}
                 >
                     {isProgress ? 'Iniciando sesión...' : 'Iniciar sesión'}
                 </Button>
+                <p> Don't have an account?
+                <a href="#"> Register </a>
+            </p>
             </Box>
             <Snackbar
                 open={Boolean(errorAlert)}
@@ -98,7 +136,10 @@ export default function Login() {
                 onClose={handleCloseAlert}
                 message={errorAlert}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                
             />
+         
+           
         </div>
     );
 }
