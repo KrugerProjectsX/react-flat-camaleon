@@ -1,4 +1,4 @@
-import { Box, Button, Snackbar, TextField, IconButton } from "@mui/material";
+import { Box, Button, Snackbar, TextField, Icon } from "@mui/material";
 import { useRef, useState } from "react";
 import { db } from "../firebase";
 import { collection, query, where, getDocs } from 'firebase/firestore';
@@ -83,9 +83,9 @@ export default function Login() {
                         className="mb-4"
                         InputProps={{
                             startAdornment:(
-                                <IconButton>
+                                <Icon>
                                     <EmailOutlinedIcon />
-                                </IconButton>
+                                </Icon>
                             )
                         }}
 
@@ -100,14 +100,14 @@ export default function Login() {
                         className="mb-4"
                         InputProps={{
                             startAdornment: (
-                                <IconButton>
+                                <Icon>
                                     <LockOutlinedIcon />
-                                </IconButton>
+                                </Icon>
                             ),
                             endAdornment: (
-                                <IconButton onClick={handleTogglePasswordVisibility}>
+                                <Icon onClick={handleTogglePasswordVisibility}>
                                     {showPassword ? <VisibilityOff /> : <Visibility />}
-                                </IconButton>
+                                </Icon>
                             )
                         }}
                     />
