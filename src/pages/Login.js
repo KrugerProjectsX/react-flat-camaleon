@@ -5,6 +5,7 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { useNavigate } from "react-router-dom";
 import { LockOutlined as LockOutlinedIcon, Visibility, VisibilityOff } from "@mui/icons-material";
 import { EmailOutlined as EmailOutlinedIcon } from '@mui/icons-material';
+import LocationCityIcon from '@mui/icons-material/LocationCity';
 
 
 export default function Login() {
@@ -58,6 +59,13 @@ export default function Login() {
     return (
 
         <>
+            <Box className="bg-blue-500 text-white py-4">
+                <div className="max-w-screen-xl mx-auto px-4 flex items-center">
+                    <Icon><LocationCityIcon /></Icon>
+                    <h1 className="text-left text-xs font-bold ml-2 uppercase">flat-camaleon</h1>
+                </div>
+            </Box>
+            
             <div className="min-h-screen flex items-center justify-center bg-gray-100">
                 <Box
                     component="form"

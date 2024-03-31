@@ -1,4 +1,5 @@
 
+import './App.css';
 import {Route, Routes} from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -9,6 +10,7 @@ import ProfileUpdate from "./pages/ProfileUpdate";
 import Register from "./pages/Register";
 import MyFlats from "./pages/MyFlats";
 import Users from "./pages/Users";
+import FlatsFavorites from "./pages/FlatsFavorites";
 
 function App() {
   return (
@@ -19,10 +21,13 @@ function App() {
           <Route path={"/flats"} element={<Flats/>}  />
           <Route path={"/flats/new"} element={<AddFlat/>}  />
           <Route path={"/profile"} element={<Profile/>}/>
+          <Route path={"/profile/:userId"} element={<Profile/>}/>
           <Route path={"/profile/edit"} element={<ProfileUpdate/>}/>
+          <Route path={"/profile/edit/:userId"} element={<ProfileUpdate/>}/>
           <Route path={"/register"} element={<Register/>}/>
           <Route path={"/my-flats"} element={<MyFlats/>}/>
           <Route path={"/users"} element={<Users/>}/>
+          <Route path={"/my-favorites-flats"} element={<FlatsFavorites/>}/>
           
       </Routes>
   );
