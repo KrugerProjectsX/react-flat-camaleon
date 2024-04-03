@@ -107,6 +107,10 @@ export default function FlatsTable({ type }) {
                                 {!row.favorite && <Button onClick={()=>addFavorite(row.id)}>Add Favorite</Button>}
                                 {row.favorite && <Button onClick={()=>removeFavorite(row.favorite)}>Remove Favorite</Button>}
                             </TableCell> }
+                            <TableCell className="px-6 py-4 whitespace-nowrap">
+                                <Button href={'/flat/&{row.id}'}>View</Button>
+                                {type === 'my-flats'&& <Button href={'/flat/edit/&{row.id}'} > Edit</Button>}
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
