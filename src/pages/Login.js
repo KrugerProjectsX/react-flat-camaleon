@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { LockOutlined as LockOutlinedIcon, Visibility, VisibilityOff } from "@mui/icons-material";
 import { EmailOutlined as EmailOutlinedIcon } from '@mui/icons-material';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
+import { blue } from "@mui/material/colors";
 
 
 export default function Login() {
@@ -59,27 +60,29 @@ export default function Login() {
     return (
 
         <>
-            <Box className="bg-blue-500 text-white py-4">
+            <Box className="bg-silver-300 text-white py-4">
                 <div className="max-w-screen-xl mx-auto px-4 flex items-center">
                     <Icon><LocationCityIcon /></Icon>
-                    <h1 className="text-left text-xs font-bold ml-2 uppercase">flat-camaleon</h1>
+                    <h1 className="text-left text-xs font-bold ml-2 uppercase">FLAT-CAMALEON</h1>
                 </div>
             </Box>
             
-            <div className="min-h-screen flex items-center justify-center bg-gray-100">
-                <Box
+            <div className="min-h-screen flex items-center justify-center bg-silver-100">
+                <Box 
                     component="form"
                     onSubmit={handleLogin}
                     sx={{
                         p: 2,
-                        border: '1px solid #ccc',
-                        borderRadius: '5px',
-                        maxWidth: '300px',
-                        backgroundColor: 'white'
+                        border: '2px solid #ccc',
+                        borderRadius: '18px',
+                        maxWidth: '250px',
+                        backgroundColor: 'wite',
+                        margin: 'auto', 
+                        width: '50%',
                     }}
                 >
                     <div className="text-center mb-8">
-                        <h1 className="text-2xl font-bold text-gray-800">Login</h1>
+                        <h1 className="text-2xl font-bold text-black-900">Login</h1>
                     </div>
                     
                     <TextField
@@ -96,7 +99,10 @@ export default function Login() {
                                 </Icon>
                             )
                         }}
-
+                        sx={{
+                             border: '2px solid #ccc',
+                             backgroundColor: '#fafdff',
+                            }}
                     />
                     
                     <TextField
@@ -106,7 +112,7 @@ export default function Login() {
                         variant="outlined"
                         type={showPassword ? "text" : "password"}
                         className="mb-4"
-                        InputProps={{
+                         InputProps={{
                             startAdornment: (
                                 <Icon>
                                     <LockOutlinedIcon />
@@ -118,6 +124,10 @@ export default function Login() {
                                 </Icon>
                             )
                         }}
+                        sx={{
+                            border: '2px solid #ccc',
+                            backgroundColor: '#fafdff',
+                            }}
                     />
                     <Button
                         type="submit"
@@ -125,7 +135,10 @@ export default function Login() {
                         fullWidth
                         variant="contained"
                         className="mb-4"
-                        sx={{ backgroundColor: '#4CAF50', color: 'white' }}
+                        style={{fontWeight:'900'}}
+                        sx={{ backgroundColor: '#fafdff', color: '#171718',
+                        border: '2px solid #ccc',
+                         }}
                     >
                         {isProgress ? 'Iniciando sesión...' : 'Iniciar sesión'}
                     </Button>
@@ -141,6 +154,7 @@ export default function Login() {
                     anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                     sx={{backgroundColor: errorAlert?.severity === 'error' ? '#f44336' : '#FF7F50'}} 
                 />
+                               
             </div>
         </>
 
