@@ -27,18 +27,18 @@ export default function Header() {
     return (
         <div>
             <AppBar position="static">
-                <Toolbar className={'bg-white'}>
+                <Toolbar className={'bg silver'}>
                     <div className={'flex items-center m-4'}>
                         <img className="pointer-events-none my-auto w-24 lg:w-40 md:w-32"  alt="My SVG"/>
 
                     </div>
-                    <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
+                    <Typography variant="h6" component="div" sx={{flexGrow: 1}} >
                     </Typography>
                     <div className={'flex items-center justify-center mr-2'}>
-                        <Button className={'text-secondary'}>Home</Button>
-                        {user && (user.role === 'landlord' || user.role === 'admin' ) && <Button className={'text-secondary'}>My Flats</Button>}
-                        <Button className={'text-secondary'}>Favourites</Button>
-                        { user && user.role ==='admin' && <Button className={'text-secondary'}>Users</Button>}
+                        <Button className={'text-secondary'} style={{ color: 'black' }}>Home</Button>
+                        {user && (user.role === 'landlord' || user.role === 'admin' ) && <Button className={'text-secondary'} style={{ color: 'black' }}>My Flats</Button>}
+                        <Button className={'text-secondary'} style={{ color: 'black' }}>Favourites</Button>
+                        { user && user.role ==='admin' && <Button className={'text-secondary'} style={{ color: 'black' }}>Users</Button>}
                     </div>
                     <MenuTransitions user={user} setUser={setUser}/>
                 </Toolbar>
