@@ -5,19 +5,19 @@ import LocationCityIcon from '@mui/icons-material/LocationCity';
 
 export default function Register() {
     return (
-        <>
-            <Box className="bg-blue-500 text-white py-4">
-                <div className="max-w-screen-xl mx-auto px-4 flex items-center"> {/* Cambio aquí */}
+        <div className="bg-cover bg-center bg-no-repeat min-h-screen">
+            <Box className="text-white py-2">
+                <div className="max-w-screen-xl mx-auto px-2 flex items-center"> {/* Cambio aquí */}
                     <Icon><LocationCityIcon /></Icon>
                     <h1 className="text-left text-xs font-bold ml-2 uppercase">flat-camaleon</h1> {/* Puedes ajustar el margen izquierdo como prefieras */}
                 </div>
             </Box>
-            <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100">
-                <div className="w-full max-w-3xl bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg">
+            <div className="mt-8 flex flex-col ms-0 items-center bg-gray-100 bg-opacity-10">
+                <div className="max-w-md mx-auto p-6 border rounded bg-opacity-40 bg-white rounded-lg">
                     <h1 className="text-center text-2xl font-semibold mb-2 uppercase">Register</h1>
                     <UserForm type={'create'} />
                 </div>
             </div>
-        </>
+        </div>
     );
 }

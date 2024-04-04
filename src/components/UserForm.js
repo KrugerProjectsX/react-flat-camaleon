@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Icon, Grid } from "@mui/material";
+import { Box, Button, TextField, Icon, Grid, Snackbar,Alert } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { doc, updateDoc, getDoc, collection, addDoc, where, query, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
@@ -8,8 +8,9 @@ import { LockOutlined as LockOutlinedIcon, Visibility, VisibilityOff } from "@mu
 import { EmailOutlined as EmailOutlinedIcon } from '@mui/icons-material';
 import { AccountBoxOutlined as AccountBoxOutlinedIcon } from "@mui/icons-material";
 
-
 export default function UserForm({ type }) {
+    const [alertMessage, setAlertMessage] = useState('');
+    const [showAlert, setShowAlert] = useState(false);
     const currentDate = new Date().toJSON().slice(0, 10);
     const navigate = useNavigate();
     const [user, setUser] = useState({
@@ -61,6 +62,13 @@ export default function UserForm({ type }) {
         processData();
     }, [])
 
+    const handleCloseAlert = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setShowAlert(false);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -71,20 +79,22 @@ export default function UserForm({ type }) {
             birthDate: birthDateRef.current.value,
             role: userTypeRef.current.value
         }
-        console.log(userSend)
-        //crear del usaurio
+
         // Validar la contraseña
         const password = passwordRef.current.value;
         const passwordRegex = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
         if (!passwordRegex.test(password)) {
-            alert("La contraseña debe contener al menos un número, una letra y un símbolo y tener al menos 8 caracteres.");
+            setAlertMessage("La contraseña debe contener al menos un número, una letra y un símbolo y tener al menos 8 caracteres.");
+            setShowAlert(true);
             return;
         }
+
         // Validar el correo electrónico
         const email = userSend.email;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            alert("Por favor ingresa un correo electrónico válido.");
+            setAlertMessage("Por favor ingresa un correo electrónico válido.");
+            setShowAlert(true);
             return;
         }
 
@@ -98,36 +108,21 @@ export default function UserForm({ type }) {
 
                 // Si hay un documento encontrado en la consulta, significa que el correo ya existe
                 if (!querySnapshot.empty) {
-                    console.log('El correo electrónico ya está registrado');
-                    // Aquí puedes manejar la situación como desees, por ejemplo, mostrar un mensaje de error
+                    setAlertMessage('El correo electrónico ya está registrado');
+                    setShowAlert(true);
+                    return;
                 } else {
                     // Si no se encuentra ningún documento, el correo no existe, entonces puedes crear el usuario
-                    console.log('El correo electrónico es nuevo, creando usuario...');
                     userSend = { ...userSend, password: passwordRef.current.value };
                     await addDoc(refCreate, userSend);
-                    console.log('Usuario creado exitosamente');
+                    setAlertMessage('Usuario creado exitosamente');
+                    setShowAlert(true);
 
                     //Login
-                    /* const user = querySnapshot.docs[0].data();
                     const userId = querySnapshot.docs[0].id;
-                    console.log(user);
-                    console.log(userId); */
-
-                    try {
-                        // Consulta para buscar usuarios con el mismo correo electrónico
-                        console.log(userSend)
-                        /* const passwordUser = userSend.password;
-                        const emailUser = userSend.email; */
-                        const querySnapshot = await getDocs(query(refCreate, where('email', '==', userSend.email)));
-                        //Si va todo bien con el registro se va directo al dashboard
-                        const userId = querySnapshot.docs[0].id;
-                        console.log("Login success", userId);
-                        localStorage.setItem('user_logged', JSON.stringify(userId));
-                        navigate('../pages/dashboard', { replace: true });
-                        return;
-                    } catch (error) {
-                        console.error('Error al realizar el login', error)
-                    }
+                    localStorage.setItem('user_logged', JSON.stringify(userId));
+                    navigate('../pages/dashboard', { replace: true });
+                    return;
                 }
             } catch (error) {
                 console.error('Error al verificar el correo electrónico:', error);
@@ -138,7 +133,6 @@ export default function UserForm({ type }) {
             await updateDoc(ref, userSend);
         }
     }
-    console.log(user);
 
     const handleTogglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -148,8 +142,8 @@ export default function UserForm({ type }) {
         <>
             <Box className="max-w-screen-xl mx-auto p-4">
                 <Grid container spacing={3}>
-                    <Grid item xs={12} sm={6} className="flex justify-center items-center">
-                        <Box component={'form'} onSubmit={handleSubmit} className="max-w-md mx-auto p-6 border rounded bg-opacity-30 bg-white rounded-lg">
+                    <Grid item xs={12} sm={12} className="flex justify-center items-center">
+                        <Box component={'form'} onSubmit={handleSubmit} >
                             {userLoaded ? (
                                 <>
                                     <TextField required disabled={type === 'view'} label="First Name" inputRef={firstNameRef} defaultValue={user.firstName} variant='outlined' className="mb-4 w-full " InputProps={{ startAdornment: (<Icon><AccountBoxOutlinedIcon /></Icon>) }} />
@@ -168,13 +162,13 @@ export default function UserForm({ type }) {
                             )}
                         </Box>
                     </Grid>
-                    <Grid item xs={12} sm={6} className="flex justify-center items-center">
-                        <Box className="border rounded-lg p-4 hidden md:block w-full max-w-md bg-opacity-30 bg-white">
-                            <img src="https://images.unsplash.com/photo-1512850183-6d7990f42385?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Imagen" className="w-full h-auto rounded-lg" />
-                        </Box>
-                    </Grid>
                 </Grid>
             </Box>
+            <Snackbar open={showAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
+                <Alert onClose={handleCloseAlert} severity="error">
+                    {alertMessage}
+                </Alert>
+            </Snackbar>
         </>
     );
 }
