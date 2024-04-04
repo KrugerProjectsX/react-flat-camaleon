@@ -60,14 +60,15 @@ export default function Login() {
     return (
 
         <>
-            <Box className="bg-silver-300 text-white py-4">
-                <div className="max-w-screen-xl mx-auto px-4 flex items-center">
+            <Box className="bg-silver-300 text-white py-2">
+                <div className="max-w-screen-xl mx-auto px-2 flex items-center">
                     <Icon><LocationCityIcon /></Icon>
-                    <h1 className="text-left text-xs font-bold ml-2 uppercase">FLAT-CAMALEON</h1>
+                    <h1 className="text-left text-xs font-bold ml uppercase">FLAT-CAMALEON</h1>
                 </div>
             </Box>
             
-            <div className="min-h-screen flex items-center justify-center bg-silver-100">
+            <div className="min-h-screen flex items-center justify-center bg-gray-100 bg-opacity-10">
+                
                 <Box 
                     component="form"
                     onSubmit={handleLogin}
