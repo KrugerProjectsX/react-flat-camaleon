@@ -11,6 +11,8 @@ import { AccountBoxOutlined as AccountBoxOutlinedIcon } from "@mui/icons-materia
 export default function UserForm({ type, userId }) {
     const [alertMessage, setAlertMessage] = useState('');
     const [showAlert, setShowAlert] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [showSuccess, setShowSuccess] = useState(false);
     const currentDate = new Date().toJSON().slice(0, 10);
     const navigate = useNavigate();
     const [user, setUser] = useState({
@@ -27,7 +29,6 @@ export default function UserForm({ type, userId }) {
     const passwordRef = useRef('');
     const birthDateRef = useRef('');
     const userTypeRef = useRef('landlords');
-    //  const id = JSON.parse(localStorage.getItem('user_logged'));
     const refCreate = collection(db, "users");
     const [showPassword, setShowPassword] = useState(false);
 
@@ -47,6 +48,7 @@ export default function UserForm({ type, userId }) {
     if (type === 'update') {
         nameButton = 'Update'
     }
+
     const getUserData = async () => {
         const dataUser = await getDoc(ref);
         const responseUser = { ...dataUser.data() };
@@ -71,6 +73,7 @@ export default function UserForm({ type, userId }) {
             return;
         }
         setShowAlert(false);
+        setShowSuccess(false);
     };
 
     const handleSubmit = async (e) => {
@@ -84,7 +87,6 @@ export default function UserForm({ type, userId }) {
             role: userTypeRef.current.value
         }
 
-        // Validar la contraseña
         const password = passwordRef.current.value;
         const passwordRegex = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
         if (!passwordRegex.test(password)) {
@@ -93,7 +95,6 @@ export default function UserForm({ type, userId }) {
             return;
         }
 
-        // Validar el correo electrónico
         const email = userSend.email;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
@@ -102,43 +103,24 @@ export default function UserForm({ type, userId }) {
             return;
         }
 
-        // Resto del código para crear o actualizar el usuario
-
-        // Verificar si el tipo de acción es "create"
         if (type === 'create') {
             try {
-                // Consulta para buscar usuarios con el mismo correo electrónico
                 const querySnapshot = await getDocs(query(refCreate, where('email', '==', userSend.email)));
-
-                // Si hay un documento encontrado en la consulta, significa que el correo ya existe
                 if (!querySnapshot.empty) {
                     setAlertMessage('El correo electrónico ya está registrado');
                     setShowAlert(true);
                     return;
                 } else {
-                    // Si no se encuentra ningún documento, el correo no existe, entonces puedes crear el usuario
                     userSend = { ...userSend, password: passwordRef.current.value };
                     await addDoc(refCreate, userSend);
-                    setAlertMessage('Usuario creado exitosamente');
-                    setShowAlert(true);
-
-                    //Login
-                    try {
-                        console.log(userSend)
-                        const newUserRef = await addDoc(refCreate, userSend); // Guardar la referencia del nuevo usuario creado
-                        const userId = newUserRef.id; // Obtener el ID del nuevo usuario
-                        localStorage.setItem('user_logged', JSON.stringify(userId));
-                        navigate('../pages/dashboard', { replace: true });
-                        return;
-                    } catch (error) {
-                        console.error('Error al crear el usuario:', error);
-                    }
+                    setSuccessMessage('Usuario creado exitosamente, deseas ingresar (Login)?');
+                    setShowSuccess(true);
                 }
             } catch (error) {
                 console.error('Error al verificar el correo electrónico:', error);
             }
         }
-        //actualziar de usaurio 
+
         if (type === 'update') {
             await updateDoc(ref, userSend);
         }
@@ -147,7 +129,11 @@ export default function UserForm({ type, userId }) {
     const handleTogglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
-    console.log(user);
+
+    const handleLogin = () => {
+        navigate('../pages/dashboard', { replace: true });
+    };
+
     return (
         <>
             <Box className="max-w-screen-xl mx-auto p-4">
@@ -174,9 +160,10 @@ export default function UserForm({ type, userId }) {
                     </Grid>
                 </Grid>
             </Box>
-            <Snackbar open={showAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
-                <Alert onClose={handleCloseAlert} severity="error">
-                    {alertMessage}
+            <Snackbar open={showAlert || showSuccess} autoHideDuration={6000} onClose={handleCloseAlert}>
+                <Alert onClose={handleCloseAlert} severity={showAlert ? "error" : "success"}>
+                    {showAlert ? alertMessage : successMessage}
+                    {showSuccess && <Button onClick={handleLogin} color="inherit" size="small">OK</Button>}
                 </Alert>
             </Snackbar>
         </>
