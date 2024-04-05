@@ -7,6 +7,7 @@ export default function Users() {
         <div>
             <Header/>
             <h1>Users</h1>
+            
             <UsersTable/>
         </div>
     );
