@@ -6,6 +6,7 @@ export default function MyFlats() {
         <div>
             <Header/>
             <h1>My Flats</h1>
+            
             <FlatsTable type={'my-flats'} />
         </div>
     );

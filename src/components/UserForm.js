@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Icon, Grid, Snackbar,Alert } from "@mui/material";
+import { Box, Button, TextField, Icon, Grid, Snackbar, Alert } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { doc, updateDoc, getDoc, collection, addDoc, where, query, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
@@ -8,9 +8,11 @@ import { LockOutlined as LockOutlinedIcon, Visibility, VisibilityOff } from "@mu
 import { EmailOutlined as EmailOutlinedIcon } from '@mui/icons-material';
 import { AccountBoxOutlined as AccountBoxOutlinedIcon } from "@mui/icons-material";
 
-export default function UserForm({ type }) {
+export default function UserForm({ type, userId }) {
     const [alertMessage, setAlertMessage] = useState('');
     const [showAlert, setShowAlert] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [showSuccess, setShowSuccess] = useState(false);
     const currentDate = new Date().toJSON().slice(0, 10);
     const navigate = useNavigate();
     const [user, setUser] = useState({
@@ -27,22 +29,26 @@ export default function UserForm({ type }) {
     const passwordRef = useRef('');
     const birthDateRef = useRef('');
     const userTypeRef = useRef('landlords');
-    const id = JSON.parse(localStorage.getItem('user_logged'));
     const refCreate = collection(db, "users");
     const [showPassword, setShowPassword] = useState(false);
 
     let ref = null;
-    if (id) {
-        ref = doc(db, "users", id);
+    if (userId == null && type !== 'create') {
+        userId = JSON.parse(localStorage.getItem('user_logged'));
+    }
+    if (userId && type !== 'create') {
+        ref = doc(db, "users", userId);
     }
 
     const today = new Date();
     const minBirthDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate()).toISOString().split('T')[0];
     const maxBirthDate = new Date(today.getFullYear() - 120, today.getMonth(), today.getDate()).toISOString().split('T')[0];
     let nameButton = 'Create';
+
     if (type === 'update') {
         nameButton = 'Update'
     }
+
     const getUserData = async () => {
         const dataUser = await getDoc(ref);
         const responseUser = { ...dataUser.data() };
@@ -67,6 +73,7 @@ export default function UserForm({ type }) {
             return;
         }
         setShowAlert(false);
+        setShowSuccess(false);
     };
 
     const handleSubmit = async (e) => {
@@ -80,7 +87,6 @@ export default function UserForm({ type }) {
             role: userTypeRef.current.value
         }
 
-        // Validar la contraseña
         const password = passwordRef.current.value;
         const passwordRegex = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
         if (!passwordRegex.test(password)) {
@@ -89,7 +95,6 @@ export default function UserForm({ type }) {
             return;
         }
 
-        // Validar el correo electrónico
         const email = userSend.email;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
@@ -98,37 +103,24 @@ export default function UserForm({ type }) {
             return;
         }
 
-        // Resto del código para crear o actualizar el usuario
-
-        // Verificar si el tipo de acción es "create"
         if (type === 'create') {
             try {
-                // Consulta para buscar usuarios con el mismo correo electrónico
                 const querySnapshot = await getDocs(query(refCreate, where('email', '==', userSend.email)));
-
-                // Si hay un documento encontrado en la consulta, significa que el correo ya existe
                 if (!querySnapshot.empty) {
                     setAlertMessage('El correo electrónico ya está registrado');
                     setShowAlert(true);
                     return;
                 } else {
-                    // Si no se encuentra ningún documento, el correo no existe, entonces puedes crear el usuario
                     userSend = { ...userSend, password: passwordRef.current.value };
                     await addDoc(refCreate, userSend);
-                    setAlertMessage('Usuario creado exitosamente');
-                    setShowAlert(true);
-
-                    //Login
-                    const userId = querySnapshot.docs[0].id;
-                    localStorage.setItem('user_logged', JSON.stringify(userId));
-                    navigate('../pages/dashboard', { replace: true });
-                    return;
+                    setSuccessMessage('Usuario creado exitosamente, deseas ingresar (Login)?');
+                    setShowSuccess(true);
                 }
             } catch (error) {
                 console.error('Error al verificar el correo electrónico:', error);
             }
         }
-        //actualziar de usaurio 
+
         if (type === 'update') {
             await updateDoc(ref, userSend);
         }
@@ -136,6 +128,10 @@ export default function UserForm({ type }) {
 
     const handleTogglePasswordVisibility = () => {
         setShowPassword(!showPassword);
+    };
+
+    const handleLogin = () => {
+        navigate('../pages/dashboard', { replace: true });
     };
 
     return (
@@ -164,9 +160,10 @@ export default function UserForm({ type }) {
                     </Grid>
                 </Grid>
             </Box>
-            <Snackbar open={showAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
-                <Alert onClose={handleCloseAlert} severity="error">
-                    {alertMessage}
+            <Snackbar open={showAlert || showSuccess} autoHideDuration={6000} onClose={handleCloseAlert}>
+                <Alert onClose={handleCloseAlert} severity={showAlert ? "error" : "success"}>
+                    {showAlert ? alertMessage : successMessage}
+                    {showSuccess && <Button onClick={handleLogin} color="inherit" size="small">OK</Button>}
                 </Alert>
             </Snackbar>
         </>

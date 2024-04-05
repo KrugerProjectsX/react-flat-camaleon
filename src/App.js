@@ -11,6 +11,8 @@ import Register from "./pages/Register";
 import MyFlats from "./pages/MyFlats";
 import Users from "./pages/Users";
 import FlatsFavorites from "./pages/FlatsFavorites";
+import Flat from "./pages/Flat";
+import FlatEdit from "./pages/FlatEdit";
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
           <Route path={"/my-flats"} element={<MyFlats/>}/>
           <Route path={"/users"} element={<Users/>}/>
           <Route path={"/my-favorites-flats"} element={<FlatsFavorites/>}/>
+          <Route path={"/flat/:id"} element={<Flat/>} />
+          <Route path={"/flat/edit/:id"} element={<FlatEdit/>} />
           
       </Routes>
   );
