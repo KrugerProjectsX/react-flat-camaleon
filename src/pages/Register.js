@@ -15,7 +15,7 @@ export default function Register() {
             <div className="mt-8 flex flex-col ms-0 items-center bg-gray-100 bg-opacity-10">
                 <div className="max-w-md mx-auto p-6 border rounded bg-opacity-40 bg-white rounded-lg">
                     <h1 className="text-center text-2xl font-semibold mb-2 uppercase">Register</h1>
-                    <UserForm type={'create'} />
+                    <UserForm type={'create'} id={null}/>
                 </div>
             </div>
         </div>

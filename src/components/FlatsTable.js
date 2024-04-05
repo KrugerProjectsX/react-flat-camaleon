@@ -54,7 +54,7 @@ export default function FlatsTable({ type }) {
             for (const item of data.docs){
                 const refFlat = doc(db, "flats", item.data().flatId);
                 const dataFlat = await getDoc(refFlat);
-                allFlats.push({...dataFlat.data(), id: dataFlat.id})
+                allFlats.push({...dataFlat.data(), id: dataFlat.id, favorite: item.id});
             }
 
             setFlats(allFlats);
@@ -92,7 +92,9 @@ export default function FlatsTable({ type }) {
                         <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">Rent price</TableCell>
                         <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">Has AC</TableCell>
                         <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">Date available</TableCell>
-                        {type === 'all-flats' && <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right"></TableCell>}
+                        {(type === 'all-flats'|| type=== 'favorite-flats') && <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right"></TableCell>}
+                        <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right"></TableCell>
+
                     </TableRow>
                 </TableHead>
                 <TableBody className="bg-white divide-y divide-gray-200">
@@ -103,13 +105,13 @@ export default function FlatsTable({ type }) {
                             <TableCell className="px-6 py-4 whitespace-nowrap" >{row.rentPrice}</TableCell>
                             <TableCell className="px-6 py-4 whitespace-nowrap" >{row.hasAc ? 'Yes' : 'No'}</TableCell>
                             <TableCell className="px-6 py-4 whitespace-nowrap" >{row.dateAvailable}</TableCell>
-                            {type === 'all-flats' && <TableCell className="px-6 py-4 whitespace-nowrap" >
+                            {(type === 'all-flats'|| type=== 'favorite-flats') && <TableCell className="px-6 py-4 whitespace-nowrap" >
                                 {!row.favorite && <Button onClick={()=>addFavorite(row.id)}>Add Favorite</Button>}
                                 {row.favorite && <Button onClick={()=>removeFavorite(row.favorite)}>Remove Favorite</Button>}
                             </TableCell> }
                             <TableCell className="px-6 py-4 whitespace-nowrap">
-                                <Button href={'/flat/&{row.id}'}>View</Button>
-                                {type === 'my-flats'&& <Button href={'/flat/edit/&{row.id}'} > Edit</Button>}
+                                <Button href={`/flat/${row.id}`} >View</Button>
+                                {type === 'my-flats' && <Button href={`/flats/edit/${row.id}`} >Edit</Button>}
                             </TableCell>
                         </TableRow>
                     ))}

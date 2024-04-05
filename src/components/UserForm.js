@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Icon, Grid, Snackbar,Alert } from "@mui/material";
+import { Box, Button, TextField, Icon, Grid, Snackbar, Alert } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { doc, updateDoc, getDoc, collection, addDoc, where, query, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
@@ -8,7 +8,7 @@ import { LockOutlined as LockOutlinedIcon, Visibility, VisibilityOff } from "@mu
 import { EmailOutlined as EmailOutlinedIcon } from '@mui/icons-material';
 import { AccountBoxOutlined as AccountBoxOutlinedIcon } from "@mui/icons-material";
 
-export default function UserForm({ type }) {
+export default function UserForm({ type, userId }) {
     const [alertMessage, setAlertMessage] = useState('');
     const [showAlert, setShowAlert] = useState(false);
     const currentDate = new Date().toJSON().slice(0, 10);
@@ -27,19 +27,23 @@ export default function UserForm({ type }) {
     const passwordRef = useRef('');
     const birthDateRef = useRef('');
     const userTypeRef = useRef('landlords');
-    const id = JSON.parse(localStorage.getItem('user_logged'));
+    //  const id = JSON.parse(localStorage.getItem('user_logged'));
     const refCreate = collection(db, "users");
     const [showPassword, setShowPassword] = useState(false);
 
     let ref = null;
-    if (id) {
-        ref = doc(db, "users", id);
+    if (userId == null && type !== 'create') {
+        userId = JSON.parse(localStorage.getItem('user_logged'));
+    }
+    if (userId && type !== 'create') {
+        ref = doc(db, "users", userId);
     }
 
     const today = new Date();
     const minBirthDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate()).toISOString().split('T')[0];
     const maxBirthDate = new Date(today.getFullYear() - 120, today.getMonth(), today.getDate()).toISOString().split('T')[0];
     let nameButton = 'Create';
+
     if (type === 'update') {
         nameButton = 'Update'
     }
@@ -119,10 +123,16 @@ export default function UserForm({ type }) {
                     setShowAlert(true);
 
                     //Login
-                    const userId = querySnapshot.docs[0].id;
-                    localStorage.setItem('user_logged', JSON.stringify(userId));
-                    navigate('../pages/dashboard', { replace: true });
-                    return;
+                    try {
+                        console.log(userSend)
+                        const newUserRef = await addDoc(refCreate, userSend); // Guardar la referencia del nuevo usuario creado
+                        const userId = newUserRef.id; // Obtener el ID del nuevo usuario
+                        localStorage.setItem('user_logged', JSON.stringify(userId));
+                        navigate('../pages/dashboard', { replace: true });
+                        return;
+                    } catch (error) {
+                        console.error('Error al crear el usuario:', error);
+                    }
                 }
             } catch (error) {
                 console.error('Error al verificar el correo electrónico:', error);
@@ -137,7 +147,7 @@ export default function UserForm({ type }) {
     const handleTogglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
-
+    console.log(user);
     return (
         <>
             <Box className="max-w-screen-xl mx-auto p-4">
