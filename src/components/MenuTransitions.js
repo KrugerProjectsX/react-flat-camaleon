@@ -14,6 +14,7 @@ import {doc, getDoc} from "firebase/firestore";
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import Avatar from '@mui/material/Avatar';
 
 export default function MenuTransitions({user, setUser}) {
 
@@ -35,13 +36,19 @@ export default function MenuTransitions({user, setUser}) {
         };
     };
 
+    const getInitials = (name) => {
+      if (!name) return '';
+      const names = name.split(' ');
+      return names.map((n) => n[0]).join('').toUpperCase();
+  };
+
     return (
         <Dropdown>
             <MenuButton>
                 <div id="dropdownAvatarNameButton" data-dropdown-toggle="dropdownAvatarName"
                      className="flex items-center text-sm pe-1 font-medium rounded-full md:me-0 text-gray-900">
-                    <img className="ml-1 w-8 h-8 me-2 rounded-full" alt="user photo"/> <span
-                    id="nameUserLog"></span>
+                     <Avatar className='me-3'> {getInitials(user.firstName)} </Avatar>
+                     <span id="nameUserLog"></span>
                     {user &&(<span>{user.firstName} {user.lastName}</span>)}
                     <svg className="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                          viewBox="0 0 10 6">

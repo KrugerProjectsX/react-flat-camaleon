@@ -46,7 +46,7 @@ export default function FlatForm({type, id}) {
             city: city.current.value,
             streetName: streetName.current.value,
             streetNumber: streetNumber.current.value,
-            areaSize: areaSize.current.value,
+            areaSize: parseInt(areaSize.current.value), 
             hasAc: hasAc.current.checked,
             yearBuilt: yearBuilt.current.value,
             rentPrice: rentPrice.current.value,
