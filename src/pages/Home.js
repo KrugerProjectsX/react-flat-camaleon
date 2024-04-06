@@ -8,7 +8,7 @@ export default function Home() {
     return (
         <div>
             <Header/>
-            <h1>Home</h1>
+            <h1 className="uppercase">Home</h1>
             <FlatsTable type={'all-flats'}/>
         </div>
     );
