@@ -29,10 +29,25 @@ export default function MenuTransitions({ user = {}, setUser }) {
 
   const createHandleMenuClick = (menuItem) => {
     return () => {
-      if (menuItem === 'Log out') {
-        logout();
+      if (menuItem === 'Home') {
+          navigate('/dashboard', { replace: true });
       }
-    };
+      if (menuItem === 'My flats') {
+          navigate('/my-flats', {replace: true});
+      }
+      if (menuItem === 'Favorites') {
+          navigate('/flats/my-favorite-flats/', {replace: true});
+      }
+      if (menuItem === 'My profile') {
+          navigate('/profile', { replace: true });
+      }
+      if (menuItem === 'Users') {
+          navigate('/users', { replace: true });
+      }
+      if (menuItem === 'Log out') {
+          logout();
+      }
+  };
   };
 
   const getInitials = (name) => {
@@ -57,9 +72,12 @@ export default function MenuTransitions({ user = {}, setUser }) {
         </div>
       </MenuButton>
       <Menu slots={{ listbox: AnimatedListbox }}>
-        <MenuItem onClick={createHandleMenuClick('Profile')}><ManageAccountsIcon /> My Profile</MenuItem>
-        <MenuItem onClick={createHandleMenuClick('Account')}><SettingsIcon /> Account Settings</MenuItem>
-        <MenuItem onClick={createHandleMenuClick('Log out')}><ExitToAppIcon /> Log out</MenuItem>
+      <MenuItem onClick={createHandleMenuClick('Home')}> Home</MenuItem>
+      <MenuItem onClick={createHandleMenuClick('Favorites')}> Favorites</MenuItem>
+      <MenuItem onClick={createHandleMenuClick('My profile')}> My Profile</MenuItem>
+                    {user && user.role === 'admin' && <MenuItem onClick={createHandleMenuClick('Users')}> Users</MenuItem>}          
+                    {user && (user.role === 'landlord' || user.role === 'admin') && <MenuItem onClick={createHandleMenuClick('My flats')}> My flats</MenuItem>}
+      <MenuItem onClick={createHandleMenuClick('Log out')}><ExitToAppIcon /> Log out</MenuItem>
       </Menu>
     </Dropdown>
   );
