@@ -30,7 +30,7 @@ function App() {
           <Route path={"/register"} element={<Register/>}/>
           <Route path={"/my-flats"} element={<MyFlats/>}/>
           <Route path={"/users"} element={<Users/>}/>
-          <Route path={"/my-favorites-flats"} element={<FlatsFavorites/>}/>
+          <Route path={"/favorite-flats"} element={<FlatsFavorites/>}/>
           <Route path={"/flat/:id"} element={<Flat/>} />
           <Route path={"/flats/edit/:id"} element={<FlatEdit/>} />
           
