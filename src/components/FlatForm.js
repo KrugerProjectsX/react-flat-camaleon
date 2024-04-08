@@ -1,11 +1,11 @@
-import {Box, Button, Switch, TextField} from "@mui/material";
-import {useEffect, useRef, useState} from "react";
-import {db} from "../firebase";
-import {collection, addDoc, doc, getDoc, updateDoc} from "firebase/firestore";
+import { Box, Button, Switch, TextField } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+import { db } from "../firebase";
+import { collection, addDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 
-export default function FlatForm({type, id}) {
+export default function FlatForm({ type, id }) {
 
     console.log(type);
     console.log(id);
@@ -23,10 +23,10 @@ export default function FlatForm({type, id}) {
             dateAvailable: currentDate
         }
     );
-    
+
 
     const navigate = useNavigate();
-    
+
     const city = useRef('');
     const streetName = useRef('');
     const streetNumber = useRef(0);
@@ -42,23 +42,23 @@ export default function FlatForm({type, id}) {
     if (id && type !== 'create') {
         refFlat = doc(db, "flats", id);
     }
-    
-    
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         const flatData = {
             city: city.current.value,
             streetName: streetName.current.value,
             streetNumber: streetNumber.current.value,
-            areaSize: parseInt(areaSize.current.value), 
+            areaSize: parseInt(areaSize.current.value),
             hasAc: hasAc.current.checked,
             yearBuilt: parseInt(yearBuilt.current.value),
             rentPrice: parseInt(rentPrice.current.value),
             dateAvailable: dateAvailable.current.value,
             user: JSON.parse(localStorage.getItem('user_logged'))
         }
-    
+
         if (type === 'create') {
             await addDoc(ref, flatData);
             navigate('/flats');
@@ -67,7 +67,7 @@ export default function FlatForm({type, id}) {
             navigate('/flats');
         }
     };
-    
+
     const getFlatData = async () => {
         const dataFlat = await getDoc(refFlat);
         const responseFlat = { ...dataFlat.data() };
@@ -79,43 +79,44 @@ export default function FlatForm({type, id}) {
     if (type === 'update') {
         let nameButton = 'Update'
     }
-    
+
     const processData = async () => {
         if (type === 'update' || type === 'view') {
             await getFlatData();
-        }else{
+        } else {
             setFlatLoaded(true)
         }
     }
 
     useEffect(() => {
         processData();
-        
-    },[]);
-    
+
+    }, []);
+
     return (
-        <Box component="form" onSubmit={handleSubmit} className="max-w-sm mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
+
+        <Box component="form" onSubmit={handleSubmit} className="max-w-sm mx-auto mt-4 p-6 bg-white rounded-lg shadow-md">
             {flatLoaded ? <>
                 <TextField disabled={type === 'view'} label="City" inputRef={city} defaultValue={flat.city} variant="outlined" fullWidth className="mb-4" />
                 <TextField disabled={type === 'view'} label="Street name" inputRef={streetName} defaultValue={flat.streetName} variant="outlined" fullWidth className="mb-4" />
                 <TextField disabled={type === 'view'} label="Street number" inputRef={streetNumber} defaultValue={flat.streetNumber} variant="outlined" fullWidth className="mb-4" />
-                <TextField  disabled={type === 'view'}label="Area size" type="number" inputRef={areaSize} defaultValue={flat.areaSize} variant="outlined" fullWidth className="mb-4" />
+                <TextField disabled={type === 'view'} label="Area size" type="number" inputRef={areaSize} defaultValue={flat.areaSize} variant="outlined" fullWidth className="mb-4" />
                 <Box className="flex items-center mb-4">
                     <Switch disabled={type === 'view'} inputRef={hasAc} defaultValue={flat.hasAc} color="primary" />
                     <label>Has AC</label>
                 </Box>
-                <TextField disabled={type === 'view'} label="Year built" type={'number'} inputProps={{ min: 1900, max: 2050 }}  inputRef={yearBuilt} defaultValue={flat.yearBuilt} variant="outlined" fullWidth className="mb-4" />
+                <TextField disabled={type === 'view'} label="Year built" type={'number'} inputProps={{ min: 1900, max: 2050 }} inputRef={yearBuilt} defaultValue={flat.yearBuilt} variant="outlined" fullWidth className="mb-4" />
                 <TextField disabled={type === 'view'} label="Rent price" type={'number'} inputRef={rentPrice} defaultValue={flat.rentPrice} variant="outlined" fullWidth className="mb-4" />
-                <TextField disabled={type === 'view'} label="Date Available" type={'date'} defaultValue={flat.dateAvailable}  inputRef={dateAvailable} variant="outlined" fullWidth className="mb-4" />
-                { type ==='create' && <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                <TextField disabled={type === 'view'} label="Date Available" type={'date'} defaultValue={flat.dateAvailable} inputRef={dateAvailable} variant="outlined" fullWidth className="mb-4" />
+                {type === 'create' && <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Add Flat
-                </Button> } 
+                </Button>}
                 {/*TODO: Add the update button*/}
-                { type ==='update' && <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                {type === 'update' && <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Update
-                </Button> } 
+                </Button>}
             </> : <p>Loading...</p>}
-            
+
         </Box>
 
     )
