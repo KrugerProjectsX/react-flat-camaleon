@@ -7,6 +7,7 @@ import AddFlat from "./pages/AddFlat";
 import Flats from "./pages/Flats";
 import Profile from "./pages/Profile";
 import ProfileUpdate from "./pages/ProfileUpdate";
+import FlatUpdate from './pages/FlatUpdate';
 import Register from "./pages/Register";
 import MyFlats from "./pages/MyFlats";
 import Users from "./pages/Users";
@@ -31,7 +32,7 @@ function App() {
           <Route path={"/users"} element={<Users/>}/>
           <Route path={"/my-favorites-flats"} element={<FlatsFavorites/>}/>
           <Route path={"/flat/:id"} element={<Flat/>} />
-          <Route path={"/flat/edit/:id"} element={<FlatEdit/>} />
+          <Route path={"/flats/edit/:id"} element={<FlatEdit/>} />
           
       </Routes>
   );

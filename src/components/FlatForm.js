@@ -37,7 +37,7 @@ export default function FlatForm({type, id}) {
     const dateAvailable = useRef('');
 
     const ref = collection(db, "flats");
-    
+
     let refFlat = null;
     if (id && type !== 'create') {
         refFlat = doc(db, "flats", id);
@@ -47,31 +47,37 @@ export default function FlatForm({type, id}) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        const flat = {
+        const flatData = {
             city: city.current.value,
             streetName: streetName.current.value,
             streetNumber: streetNumber.current.value,
             areaSize: parseInt(areaSize.current.value), 
             hasAc: hasAc.current.checked,
-            yearBuilt: yearBuilt.current.value,
-            rentPrice: rentPrice.current.value,
+            yearBuilt: parseInt(yearBuilt.current.value),
+            rentPrice: parseInt(rentPrice.current.value),
             dateAvailable: dateAvailable.current.value,
             user: JSON.parse(localStorage.getItem('user_logged'))
         }
+    
         if (type === 'create') {
-            await addDoc(ref, flat);
-            navigate('/flats', { replace: false });
+            await addDoc(ref, flatData);
+            navigate('/flats');
+        } else if (type === 'update' && refFlat) {
+            await updateDoc(refFlat, flatData);
+            navigate('/flats');
         }
-        if (type === 'update') {
-            await updateDoc(refFlat, flatSend);
-          }
-        
-    }
+    };
+    
     const getFlatData = async () => {
         const dataFlat = await getDoc(refFlat);
         const responseFlat = { ...dataFlat.data() };
         setFlat(responseFlat);
         setFlatLoaded(true);
+    }
+
+
+    if (type === 'update') {
+        let nameButton = 'Update'
     }
     
     const processData = async () => {
@@ -105,6 +111,9 @@ export default function FlatForm({type, id}) {
                     Add Flat
                 </Button> } 
                 {/*TODO: Add the update button*/}
+                { type ==='update' && <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Update
+                </Button> } 
             </> : <p>Loading...</p>}
             
         </Box>
