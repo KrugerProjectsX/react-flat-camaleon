@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { LockOutlined as LockOutlinedIcon, Visibility, VisibilityOff } from "@mui/icons-material";
 import { EmailOutlined as EmailOutlinedIcon } from '@mui/icons-material';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
-import { blue } from "@mui/material/colors";
 
 
 export default function Login() {
