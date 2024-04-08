@@ -1,11 +1,14 @@
 import {Box, Button, Switch, TextField} from "@mui/material";
 import {useEffect, useRef, useState} from "react";
 import {db} from "../firebase";
-import {collection, addDoc, doc, getDoc} from "firebase/firestore";
+import {collection, addDoc, doc, getDoc, updateDoc} from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 
 export default function FlatForm({type, id}) {
+
+    console.log(type);
+    console.log(id);
     const [flatLoaded, setFlatLoaded] = useState(false);
     const currentDate = new Date().toJSON().slice(0, 10);
     const [flat, setFlat] = useState(
@@ -32,7 +35,9 @@ export default function FlatForm({type, id}) {
     const yearBuilt = useRef(0);
     const rentPrice = useRef(0);
     const dateAvailable = useRef('');
+
     const ref = collection(db, "flats");
+    
     let refFlat = null;
     if (id && type !== 'create') {
         refFlat = doc(db, "flats", id);
@@ -57,6 +62,9 @@ export default function FlatForm({type, id}) {
             await addDoc(ref, flat);
             navigate('/flats', { replace: false });
         }
+        if (type === 'update') {
+            await updateDoc(refFlat, flatSend);
+          }
         
     }
     const getFlatData = async () => {
