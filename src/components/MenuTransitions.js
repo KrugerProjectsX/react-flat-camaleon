@@ -1,100 +1,116 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import {Dropdown} from '@mui/base/Dropdown';
-import {Menu} from '@mui/base/Menu';
-import {MenuButton as BaseMenuButton} from '@mui/base/MenuButton';
-import {MenuItem as BaseMenuItem, menuItemClasses} from '@mui/base/MenuItem';
-import {styled} from '@mui/system';
-import {CssTransition} from '@mui/base/Transitions';
-import {PopupContext} from '@mui/base/Unstable_Popup';
-import {useNavigate} from "react-router-dom";
-import {db} from "../firebase";
-import {useEffect, useState} from "react";
-import {doc, getDoc} from "firebase/firestore";
+import { Dropdown } from '@mui/base/Dropdown';
+import { Menu } from '@mui/base/Menu';
+import { MenuButton as BaseMenuButton } from '@mui/base/MenuButton';
+import { MenuItem as BaseMenuItem, menuItemClasses } from '@mui/base/MenuItem';
+import { styled } from '@mui/system';
+import { CssTransition } from '@mui/base/Transitions';
+import { PopupContext } from '@mui/base/Unstable_Popup';
+import { useNavigate } from "react-router-dom";
+import { db } from "../firebase";
+import { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Avatar from '@mui/material/Avatar';
 
-export default function MenuTransitions({user, setUser}) {
+export default function MenuTransitions({ user = {}, setUser }) {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate()
-
-    const logout = () => {
-        // Remove user information from localStorage
-        localStorage.removeItem('user_logged');
-        setUser('');
-        // Redirect to the login page
-        navigate('/', {replace: true});
-    };
-
-    const createHandleMenuClick = (menuItem) => {
-        return () => {
-            if (menuItem === 'Log out') {
-                logout();
-            }
-        };
-    };
-
-    const getInitials = (name) => {
-      if (!name) return '';
-      const names = name.split(' ');
-      return names.map((n) => n[0]).join('').toUpperCase();
+  const logout = () => {
+    // Remove user information from localStorage
+    localStorage.removeItem('user_logged');
+    setUser('');
+    // Redirect to the login page
+    navigate('/', { replace: true });
   };
 
-    return (
-        <Dropdown>
-            <MenuButton>
-                <div id="dropdownAvatarNameButton" data-dropdown-toggle="dropdownAvatarName"
-                     className="flex items-center text-sm pe-1 font-medium rounded-full md:me-0 text-gray-900">
-                     <Avatar className='me-3'> {getInitials(user.firstName)} </Avatar>
-                     <span id="nameUserLog"></span>
-                    {user &&(<span>{user.firstName} {user.lastName}</span>)}
-                    <svg className="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                         viewBox="0 0 10 6">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                              d="m1 1 4 4 4-4"/>
-                    </svg>
-                </div>
+  const createHandleMenuClick = (menuItem) => {
+    return () => {
+      if (menuItem === 'Home') {
+          navigate('/dashboard', { replace: true });
+      }
+      if (menuItem === 'My flats') {
+          navigate('/my-flats', {replace: true});
+      }
+      if (menuItem === 'Favorites') {
+          navigate('/flats/my-favorite-flats/', {replace: true});
+      }
+      if (menuItem === 'My profile') {
+          navigate('/profile', { replace: true });
+      }
+      if (menuItem === 'Users') {
+          navigate('/users', { replace: true });
+      }
+      if (menuItem === 'Log out') {
+          logout();
+      }
+  };
+  };
 
-            </MenuButton>
-            <Menu slots={{listbox: AnimatedListbox}}>
-                <MenuItem onClick={createHandleMenuClick('Profile')}><ManageAccountsIcon/> My Profile</MenuItem>
-                <MenuItem onClick={createHandleMenuClick('Account')}><SettingsIcon/> Account Settings</MenuItem>
-                <MenuItem onClick={createHandleMenuClick('Log out')}><ExitToAppIcon/> Log out</MenuItem>
-            </Menu>
-        </Dropdown>
-    );
+  const getInitials = (name) => {
+    if (!name || typeof name !== 'object' || !name.firstName || !name.lastName) return '?';
+    const initials = name.firstName[0] + name.lastName[0];
+    return initials.toUpperCase();
+  };
+
+  return (
+    <Dropdown>
+      <MenuButton>
+        <div id="dropdownAvatarNameButton" data-dropdown-toggle="dropdownAvatarName"
+          className="flex items-center text-sm pe-1 font-medium rounded-full md:me-0 text-gray-900">
+          <Avatar className='me-3'> {getInitials(user)} </Avatar>
+          <span id="nameUserLog"></span>
+          {user && (<span>{user.firstName} {user.lastName}</span>)}
+          <svg className="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 10 6">
+            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+              d="m1 1 4 4 4-4" />
+          </svg>
+        </div>
+      </MenuButton>
+      <Menu slots={{ listbox: AnimatedListbox }}>
+      <MenuItem onClick={createHandleMenuClick('Home')}> Home</MenuItem>
+      <MenuItem onClick={createHandleMenuClick('Favorites')}> Favorites</MenuItem>
+      <MenuItem onClick={createHandleMenuClick('My profile')}> My Profile</MenuItem>
+                    {user && user.role === 'admin' && <MenuItem onClick={createHandleMenuClick('Users')}> Users</MenuItem>}          
+                    {user && (user.role === 'landlord' || user.role === 'admin') && <MenuItem onClick={createHandleMenuClick('My flats')}> My flats</MenuItem>}
+      <MenuItem onClick={createHandleMenuClick('Log out')}><ExitToAppIcon /> Log out</MenuItem>
+      </Menu>
+    </Dropdown>
+  );
 }
 
 const blue = {
-    50: '#F0F7FF',
-    100: '#C2E0FF',
-    200: '#99CCF3',
-    300: '#66B2FF',
-    400: '#3399FF',
-    500: '#007FFF',
-    600: '#0072E6',
-    700: '#0059B3',
-    800: '#004C99',
-    900: '#003A75',
+  50: '#F0F7FF',
+  100: '#C2E0FF',
+  200: '#99CCF3',
+  300: '#66B2FF',
+  400: '#3399FF',
+  500: '#007FFF',
+  600: '#0072E6',
+  700: '#0059B3',
+  800: '#004C99',
+  900: '#003A75',
 };
 
 const grey = {
-    50: '#F3F6F9',
-    100: '#E5EAF2',
-    200: '#DAE2ED',
-    300: '#C7D0DD',
-    400: '#B0B8C4',
-    500: '#9DA8B7',
-    600: '#6B7A90',
-    700: '#434D5B',
-    800: '#303740',
-    900: '#1C2025',
+  50: '#F3F6F9',
+  100: '#E5EAF2',
+  200: '#DAE2ED',
+  300: '#C7D0DD',
+  400: '#B0B8C4',
+  500: '#9DA8B7',
+  600: '#6B7A90',
+  700: '#434D5B',
+  800: '#303740',
+  900: '#1C2025',
 };
 
 const Listbox = styled('ul')(
-    ({theme}) => `
+  ({ theme }) => `
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 0.875rem;
   box-sizing: border-box;
@@ -133,34 +149,34 @@ const Listbox = styled('ul')(
 );
 
 const AnimatedListbox = React.forwardRef(function AnimatedListbox(props, ref) {
-    const {ownerState, ...other} = props;
-    const popupContext = React.useContext(PopupContext);
+  const { ownerState, ...other } = props;
+  const popupContext = React.useContext(PopupContext);
 
-    if (popupContext == null) {
-        throw new Error(
-            'The `AnimatedListbox` component cannot be rendered outside a `Popup` component',
-        );
-    }
-
-    const verticalPlacement = popupContext.placement.split('-')[0];
-
-    return (
-        <CssTransition
-            className={`placement-${verticalPlacement}`}
-            enterClassName="open"
-            exitClassName="closed"
-        >
-            <Listbox {...other} ref={ref}/>
-        </CssTransition>
+  if (popupContext == null) {
+    throw new Error(
+      'The `AnimatedListbox` component cannot be rendered outside a `Popup` component',
     );
+  }
+
+  const verticalPlacement = popupContext.placement.split('-')[0];
+
+  return (
+    <CssTransition
+      className={`placement-${verticalPlacement}`}
+      enterClassName="open"
+      exitClassName="closed"
+    >
+      <Listbox {...other} ref={ref} />
+    </CssTransition>
+  );
 });
 
 AnimatedListbox.propTypes = {
-    ownerState: PropTypes.object.isRequired,
+  ownerState: PropTypes.object.isRequired,
 };
 
 const MenuItem = styled(BaseMenuItem)(
-    ({theme}) => `
+  ({ theme }) => `
   list-style: none;
   padding: 8px;
   border-radius: 8px;
@@ -189,7 +205,7 @@ const MenuItem = styled(BaseMenuItem)(
 );
 
 const MenuButton = styled(BaseMenuButton)(
-    ({theme}) => `
+  ({ theme }) => `
   font-family: 'IBM Plex Sans', sans-serif;
   font-weight: 600;
   font-size: 0.875rem;

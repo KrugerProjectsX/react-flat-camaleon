@@ -34,12 +34,12 @@ export default function Header() {
                     </Box>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                     </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mr: 2 }}>
+                    {/* <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mr: 2 }}>
                         <Button sx={{ color: 'text.secondary' }}>Home</Button>
                         {user && (user.role === 'landlord' || user.role === 'admin') && <Button sx={{ color: 'text.secondary' }}>My Flats</Button>}
                         <Button sx={{ color: 'text.secondary' }}>Favourites</Button>
                         {user && user.role === 'admin' && <Button sx={{ color: 'text.secondary' }}>Users</Button>}
-                    </Box>
+                    </Box> */}
                     <MenuTransitions user={user} setUser={setUser} />
                 </Toolbar>
             </AppBar>

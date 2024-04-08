@@ -9,7 +9,10 @@ import { useEffect, useState } from "react";
 import {getDocs, query, where, collection, addDoc, doc, deleteDoc, getDoc} from "firebase/firestore";
 import { db } from "../firebase";
 import {Button} from "@mui/material";
-
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import EditIcon from '@mui/icons-material/Edit';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 
 // @Params: type: "my-flats" | "all-flats" | "favorite-flats"
 export default function FlatsTable({ type }) {
@@ -105,13 +108,14 @@ export default function FlatsTable({ type }) {
                             <TableCell className="px-6 py-4 whitespace-nowrap" >{row.rentPrice}</TableCell>
                             <TableCell className="px-6 py-4 whitespace-nowrap" >{row.hasAc ? 'Yes' : 'No'}</TableCell>
                             <TableCell className="px-6 py-4 whitespace-nowrap" >{row.dateAvailable}</TableCell>
-                            {(type === 'all-flats'|| type=== 'favorite-flats') && <TableCell className="px-6 py-4 whitespace-nowrap" >
-                                {!row.favorite && <Button onClick={()=>addFavorite(row.id)}>Add Favorite</Button>}
-                                {row.favorite && <Button onClick={()=>removeFavorite(row.favorite)}>Remove Favorite</Button>}
-                            </TableCell> }
+                            {(type === 'all-flats' || type === 'favorite-flats') &&
+                                <TableCell className="px-6 py-4 whitespace-nowrap">
+                                    {row.favorite ? <ThumbUpIcon style={{ color: '#29b6f6' }} onClick={() => removeFavorite(row.favorite)} /> : <ThumbUpOffAltIcon onClick={() => addFavorite(row.id)} />}
+                                </TableCell>
+                            }
                             <TableCell className="px-6 py-4 whitespace-nowrap">
-                                <Button href={`/flat/${row.id}`} >View</Button>
-                                {type === 'my-flats' && <Button href={`/flats/edit/${row.id}`} >Edit</Button>}
+                                <Button href={`/flat/${row.id}`} ><VisibilityIcon /></Button>
+                                {type === 'my-flats' && <Button href={`/flats/edit/${row.id}`} ><EditIcon /></Button>}
                             </TableCell>
                         </TableRow>
                     ))}
