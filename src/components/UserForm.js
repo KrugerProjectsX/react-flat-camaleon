@@ -147,7 +147,7 @@ export default function UserForm({ type, userId }) {
                                     <TextField required disabled={type === 'view'} type='email' label='Email' inputRef={emailRef} defaultValue={user.email} variant='outlined' className="mb-4 w-full" InputProps={{ startAdornment: (<Icon><EmailOutlinedIcon /></Icon>) }} />
                                     {type === 'create' && <TextField type={showPassword ? "text" : "password"} label='Password' inputRef={passwordRef} variant='outlined' className="mb-4 w-full" InputProps={{ startAdornment: (<Icon><LockOutlinedIcon /></Icon>), endAdornment: (<Icon onClick={handleTogglePasswordVisibility}> {showPassword ? <VisibilityOff /> : <Visibility />}</Icon>) }} />}
                                     <TextField required disabled={type === 'view'} label='Birth Date' type='date' inputRef={birthDateRef} inputProps={{ min: maxBirthDate, max: minBirthDate }} defaultValue={user.birthDate} variant='outlined' className="mb-4 w-full" />
-                                    <TextField select label="User Type" variant="outlined" SelectProps={{ native: true }} className="w-full mb-5" inputRef={userTypeRef}>
+                                    <TextField disabled={type === 'view'} select label="User Type" variant="outlined" SelectProps={{ native: true }} className="w-full mb-5" inputRef={userTypeRef}>
                                         <option key="landlord" value="landlord">landlord</option>
                                         <option key="renter" value="renter">renter</option>
                                     </TextField>
