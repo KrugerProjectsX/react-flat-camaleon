@@ -8,7 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import { useEffect, useState } from "react";
 import {getDocs, query, where, collection, addDoc, doc, deleteDoc, getDoc} from "firebase/firestore";
 import { db } from "../firebase";
-import {Button,TextField,Slider} from "@mui/material";
+import {Button,TextField} from "@mui/material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
@@ -138,7 +138,7 @@ export default function FlatsTable({ type }) {
 
     return (
         <TableContainer>
-            <div style={{ margin: '20px' }}>
+            {/* <div style={{ margin: '20px' }}>
                 <Slider
                     value={rentPriceRange}
                     onChange={handleRentPriceChange}
@@ -147,9 +147,9 @@ export default function FlatsTable({ type }) {
                     min={0}
                     max={900}
                 />
-                {/* Botón para iniciar la búsqueda por rango de precios */}
+            
                 <Button variant="contained" onClick={searchByRentPriceRange} style={{ marginTop: '10px' }}>Search by Rent Price</Button>
-            </div>
+            </div> */}
             <TextField
                 label="Search by City"
                 variant="outlined"
