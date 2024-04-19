@@ -36,7 +36,7 @@ export default function MenuTransitions({ user = {}, setUser }) {
           navigate('/my-flats', {replace: true});
       }
       if (menuItem === 'Favorites') {
-          navigate('/flats/my-favorite-flats/', {replace: true});
+          navigate('/favorite-flats', {replace: true});
       }
       if (menuItem === 'My profile') {
           navigate('/profile', { replace: true });
