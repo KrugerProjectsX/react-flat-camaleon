@@ -118,9 +118,10 @@ export default function UserForm({ type, userId }) {
 
                     console.log(userSend);
                     console.log('querySnapshot', querySnapshot)
+
                     try {
                         const querySnapshot = await getDocs(query(refCreate, where('email', '==', userSend.email)));
-                        console.log('david',querySnapshot)
+                        console.log('david', querySnapshot)
                         if (querySnapshot.docs[0]) { // Verifica si hay documentos devueltos
                             console.log("querySnapshot", querySnapshot)
                             const user = querySnapshot.docs[0].data();
@@ -130,7 +131,8 @@ export default function UserForm({ type, userId }) {
 
                             localStorage.setItem('user_logged', JSON.stringify(userId));
 
-                            navigate('/dashboard', { replace: true });
+
+                            //navigate('/dashboard', { replace: true });
 
                             setShowSuccess(true);
                         } else {
@@ -156,7 +158,9 @@ export default function UserForm({ type, userId }) {
     };
 
     const handleLogin = () => {
-        navigate('../pages/dashboard', { replace: true });
+
+
+        navigate('/dashboard', { replace: true });
     };
 
     return (
@@ -188,7 +192,12 @@ export default function UserForm({ type, userId }) {
             <Snackbar open={showAlert || showSuccess} autoHideDuration={6000} onClose={handleCloseAlert}>
                 <Alert onClose={handleCloseAlert} severity={showAlert ? "error" : "success"}>
                     {showAlert ? alertMessage : successMessage}
-                    {showSuccess && <Button onClick={handleLogin} color="inherit" size="small">OK</Button>}
+                    {showSuccess && (
+                        <>
+                            {type === 'create' && <span>¡Usuario registrado correctamente! ¿Ya tienes una cuenta? Inicia sesión aquí:</span>}
+                            <Button onClick={handleLogin} color="inherit" size="small">Login</Button>
+                        </>
+                    )}
                 </Alert>
             </Snackbar>
         </>
