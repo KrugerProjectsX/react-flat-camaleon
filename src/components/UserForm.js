@@ -4,6 +4,7 @@ import { doc, updateDoc, getDoc, collection, addDoc, where, query, getDocs } fro
 import { db } from "../firebase";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { LockOutlined as LockOutlinedIcon, Visibility, VisibilityOff } from "@mui/icons-material";
 import { EmailOutlined as EmailOutlinedIcon } from '@mui/icons-material';
 import { AccountBoxOutlined as AccountBoxOutlinedIcon } from "@mui/icons-material";
@@ -95,7 +96,7 @@ export default function UserForm({ type, userId }) {
             return;
         }
 
-        const email = userSend.email;
+        let email = userSend.email;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             setAlertMessage("Por favor ingresa un correo electrónico válido.");
@@ -112,9 +113,33 @@ export default function UserForm({ type, userId }) {
                     return;
                 } else {
                     userSend = { ...userSend, password: passwordRef.current.value };
+                    //Agrega a la base de datos
                     await addDoc(refCreate, userSend);
-                    setSuccessMessage('Usuario creado exitosamente, deseas ingresar (Login)?');
-                    setShowSuccess(true);
+
+                    console.log(userSend);
+                    console.log('querySnapshot', querySnapshot)
+                    try {
+                        const querySnapshot = await getDocs(query(refCreate, where('email', '==', userSend.email)));
+                        console.log('david',querySnapshot)
+                        if (querySnapshot.docs[0]) { // Verifica si hay documentos devueltos
+                            console.log("querySnapshot", querySnapshot)
+                            const user = querySnapshot.docs[0].data();
+                            const userId = querySnapshot.docs[0].id;
+                            console.log("user", user);
+                            console.log(userId)
+
+                            localStorage.setItem('user_logged', JSON.stringify(userId));
+
+                            navigate('/dashboard', { replace: true });
+
+                            setShowSuccess(true);
+                        } else {
+                            console.log("No se encontraron documentos en la consulta.");
+                        }
+                    } catch (error) {
+                        console.log(error)
+
+                    }
                 }
             } catch (error) {
                 console.error('Error al verificar el correo electrónico:', error);
