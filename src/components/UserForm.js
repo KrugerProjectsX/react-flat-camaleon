@@ -9,6 +9,7 @@ import { LockOutlined as LockOutlinedIcon, Visibility, VisibilityOff } from "@mu
 import { EmailOutlined as EmailOutlinedIcon } from '@mui/icons-material';
 import { AccountBoxOutlined as AccountBoxOutlinedIcon } from "@mui/icons-material";
 
+
 export default function UserForm({ type, userId }) {
     const [alertMessage, setAlertMessage] = useState('');
     const [showAlert, setShowAlert] = useState(false);
@@ -87,14 +88,28 @@ export default function UserForm({ type, userId }) {
             birthDate: birthDateRef.current.value,
             role: userTypeRef.current.value
         }
+        if (type === 'update') {
+            // Elimina la contraseña del objeto userSend antes de la actualización
+            delete userSend.password;
 
-        const password = passwordRef.current.value;
-        const passwordRegex = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
-        if (!passwordRegex.test(password)) {
-            setAlertMessage("La contraseña debe contener al menos un número, una letra y un símbolo y tener al menos 8 caracteres.");
-            setShowAlert(true);
-            return;
+            try {
+                await updateDoc(ref, userSend);
+                setShowSuccess(true); // Establece el estado showSuccess en true
+
+            } catch (error) {
+                console.error('Error al actualizar el usuario:', error);
+            }
         }
+        if (type === 'create') {
+            const password = passwordRef.current.value;
+            const passwordRegex = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+            if (!passwordRegex.test(password)) {
+                setAlertMessage("La contraseña debe contener al menos un número, una letra y un símbolo y tener al menos 8 caracteres.");
+                setShowAlert(true);
+                return;
+            }
+        }
+
 
         let email = userSend.email;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -118,9 +133,9 @@ export default function UserForm({ type, userId }) {
 
                     console.log(userSend);
                     console.log('querySnapshot', querySnapshot)
+
                     try {
                         const querySnapshot = await getDocs(query(refCreate, where('email', '==', userSend.email)));
-                        console.log('david',querySnapshot)
                         if (querySnapshot.docs[0]) { // Verifica si hay documentos devueltos
                             console.log("querySnapshot", querySnapshot)
                             const user = querySnapshot.docs[0].data();
@@ -130,7 +145,8 @@ export default function UserForm({ type, userId }) {
 
                             localStorage.setItem('user_logged', JSON.stringify(userId));
 
-                            navigate('/dashboard', { replace: true });
+
+                            //navigate('/dashboard', { replace: true });
 
                             setShowSuccess(true);
                         } else {
@@ -146,9 +162,6 @@ export default function UserForm({ type, userId }) {
             }
         }
 
-        if (type === 'update') {
-            await updateDoc(ref, userSend);
-        }
     }
 
     const handleTogglePasswordVisibility = () => {
@@ -156,7 +169,10 @@ export default function UserForm({ type, userId }) {
     };
 
     const handleLogin = () => {
-        navigate('../pages/dashboard', { replace: true });
+        navigate('/dashboard', { replace: true });
+    };
+    const handleUser = () => {
+        navigate('/dashboard', { replace: true });
     };
 
     return (
@@ -188,7 +204,23 @@ export default function UserForm({ type, userId }) {
             <Snackbar open={showAlert || showSuccess} autoHideDuration={6000} onClose={handleCloseAlert}>
                 <Alert onClose={handleCloseAlert} severity={showAlert ? "error" : "success"}>
                     {showAlert ? alertMessage : successMessage}
-                    {showSuccess && <Button onClick={handleLogin} color="inherit" size="small">OK</Button>}
+                    {showSuccess && (
+                        <>
+                            {type === 'create' && (
+                                <>
+                                    <span>¡Usuario registrado correctamente! ¿Ya tienes una cuenta? Inicia sesión aquí:</span>
+                                    <Button onClick={handleLogin} color="inherit" size="small">Login</Button>
+                                </>
+                            )}
+                            {type === 'update' && (
+                                <>
+                                    <span>Actualizado correctamente</span>
+                                    <Button onClick={handleUser} color="inherit" size="small">OK</Button>
+                                </>
+                                
+                            )}
+                        </>
+                    )}
                 </Alert>
             </Snackbar>
         </>
