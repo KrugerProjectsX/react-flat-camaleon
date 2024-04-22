@@ -4,9 +4,11 @@ import { doc, updateDoc, getDoc, collection, addDoc, where, query, getDocs } fro
 import { db } from "../firebase";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { LockOutlined as LockOutlinedIcon, Visibility, VisibilityOff } from "@mui/icons-material";
 import { EmailOutlined as EmailOutlinedIcon } from '@mui/icons-material';
 import { AccountBoxOutlined as AccountBoxOutlinedIcon } from "@mui/icons-material";
+
 
 export default function UserForm({ type, userId }) {
     const [alertMessage, setAlertMessage] = useState('');
@@ -86,16 +88,30 @@ export default function UserForm({ type, userId }) {
             birthDate: birthDateRef.current.value,
             role: userTypeRef.current.value
         }
+        if (type === 'update') {
+            // Elimina la contraseña del objeto userSend antes de la actualización
+            delete userSend.password;
 
-        const password = passwordRef.current.value;
-        const passwordRegex = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
-        if (!passwordRegex.test(password)) {
-            setAlertMessage("La contraseña debe contener al menos un número, una letra y un símbolo y tener al menos 8 caracteres.");
-            setShowAlert(true);
-            return;
+            try {
+                await updateDoc(ref, userSend);
+                setShowSuccess(true); // Establece el estado showSuccess en true
+
+            } catch (error) {
+                console.error('Error al actualizar el usuario:', error);
+            }
+        }
+        if (type === 'create') {
+            const password = passwordRef.current.value;
+            const passwordRegex = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+            if (!passwordRegex.test(password)) {
+                setAlertMessage("La contraseña debe contener al menos un número, una letra y un símbolo y tener al menos 8 caracteres.");
+                setShowAlert(true);
+                return;
+            }
         }
 
-        const email = userSend.email;
+
+        let email = userSend.email;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             setAlertMessage("Por favor ingresa un correo electrónico válido.");
@@ -112,18 +128,40 @@ export default function UserForm({ type, userId }) {
                     return;
                 } else {
                     userSend = { ...userSend, password: passwordRef.current.value };
+                    //Agrega a la base de datos
                     await addDoc(refCreate, userSend);
-                    setSuccessMessage('Usuario creado exitosamente, deseas ingresar (Login)?');
-                    setShowSuccess(true);
+
+                    console.log(userSend);
+                    console.log('querySnapshot', querySnapshot)
+
+                    try {
+                        const querySnapshot = await getDocs(query(refCreate, where('email', '==', userSend.email)));
+                        if (querySnapshot.docs[0]) { // Verifica si hay documentos devueltos
+                            console.log("querySnapshot", querySnapshot)
+                            const user = querySnapshot.docs[0].data();
+                            const userId = querySnapshot.docs[0].id;
+                            console.log("user", user);
+                            console.log(userId)
+
+                            localStorage.setItem('user_logged', JSON.stringify(userId));
+
+
+                            //navigate('/dashboard', { replace: true });
+
+                            setShowSuccess(true);
+                        } else {
+                            console.log("No se encontraron documentos en la consulta.");
+                        }
+                    } catch (error) {
+                        console.log(error)
+
+                    }
                 }
             } catch (error) {
                 console.error('Error al verificar el correo electrónico:', error);
             }
         }
 
-        if (type === 'update') {
-            await updateDoc(ref, userSend);
-        }
     }
 
     const handleTogglePasswordVisibility = () => {
@@ -131,7 +169,10 @@ export default function UserForm({ type, userId }) {
     };
 
     const handleLogin = () => {
-        navigate('../pages/dashboard', { replace: true });
+        navigate('/dashboard', { replace: true });
+    };
+    const handleUser = () => {
+        navigate('/dashboard', { replace: true });
     };
 
     return (
@@ -163,7 +204,23 @@ export default function UserForm({ type, userId }) {
             <Snackbar open={showAlert || showSuccess} autoHideDuration={6000} onClose={handleCloseAlert}>
                 <Alert onClose={handleCloseAlert} severity={showAlert ? "error" : "success"}>
                     {showAlert ? alertMessage : successMessage}
-                    {showSuccess && <Button onClick={handleLogin} color="inherit" size="small">OK</Button>}
+                    {showSuccess && (
+                        <>
+                            {type === 'create' && (
+                                <>
+                                    <span>¡Usuario registrado correctamente! ¿Ya tienes una cuenta? Inicia sesión aquí:</span>
+                                    <Button onClick={handleLogin} color="inherit" size="small">Login</Button>
+                                </>
+                            )}
+                            {type === 'update' && (
+                                <>
+                                    <span>Actualizado correctamente</span>
+                                    <Button onClick={handleUser} color="inherit" size="small">OK</Button>
+                                </>
+                                
+                            )}
+                        </>
+                    )}
                 </Alert>
             </Snackbar>
         </>

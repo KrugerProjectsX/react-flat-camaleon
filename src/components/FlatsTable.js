@@ -13,6 +13,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 // @Params: type: "my-flats" | "all-flats" | "favorite-flats"
 export default function FlatsTable({ type }) {
@@ -26,6 +27,8 @@ export default function FlatsTable({ type }) {
     const [minArea, setMinArea] = useState(''); // Estado para almacenar el área mínima del rango
     const [maxArea, setMaxArea] = useState(''); // Estado para almacenar el área máxima del rango
     const [rentPriceRange, setRentPriceRange] = useState([0, 1000]); // Rango de precios de alquiler
+    // Nuevo estado para almacenar los nombres de usuario
+    const [userMap, setUserMap] = useState({});
 
 
     const getData = async () => {
@@ -38,6 +41,7 @@ export default function FlatsTable({ type }) {
 
             setFlats(rows);
         }
+        
         if (type === 'all-flats') {
             const data = await getDocs(ref);
             const allFlats = [];
@@ -71,6 +75,8 @@ export default function FlatsTable({ type }) {
         
         
     }
+
+   
     
     const addFavorite = async (id) => {
         //TODO:  verificar si ya existe esta relacion entre el flat id y userId
@@ -136,6 +142,44 @@ export default function FlatsTable({ type }) {
         setFlats(rows);
     };
 
+
+    // Función para cargar los nombres de usuario correspondientes a los userIds
+    const loadUserNames = async () => {
+        // Obtener la referencia a la colección de usuarios
+        const usersRef = collection(db, "users");
+        // Obtener todos los documentos de la colección de usuarios
+        const usersData = await getDocs(usersRef);
+        // Inicializar un objeto para almacenar los nombres de usuario
+        const users = {};
+        // Iterar sobre los documentos y almacenar los nombres de usuario en el objeto
+        usersData.forEach((doc) => {
+            users[doc.id] = doc.data().firstName + ' ' + doc.data().lastName;
+        });
+        // Establecer el estado con el objeto de nombres de usuario
+        setUserMap(users);
+    };
+
+    // Cargar los nombres de usuario al montar el componente
+    useEffect(() => {
+        loadUserNames();
+    }, []);
+    
+
+    // Función para eliminar un flat
+    const deleteFlat = async (flatId) => {
+        const flatDoc = doc(db, "flats", flatId);
+        const flatData = await getDoc(flatDoc);
+        const flatUserId = flatData.data().user;
+
+        if (flatUserId === userId) {
+            await deleteDoc(flatDoc);
+            setFlag(!flag);
+        } else {
+            alert("You can only delete your own flats.");
+        }
+    }
+
+
     return (
         <TableContainer>
             {/* <div style={{ margin: '20px' }}>
@@ -187,9 +231,13 @@ export default function FlatsTable({ type }) {
                         <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">Rent price</TableCell>
                         <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">Has AC</TableCell>
                         <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">Date available</TableCell>
+                        {(type === 'all-flats' ) && 
+                            <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">Usuario</TableCell>
+                        
+                        }
                         {(type === 'all-flats'|| type=== 'favorite-flats') && <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right"></TableCell>}
                         <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right"></TableCell>
-
+                       
                     </TableRow>
                 </TableHead>
                 <TableBody className="bg-white divide-y divide-gray-200">
@@ -200,6 +248,11 @@ export default function FlatsTable({ type }) {
                             <TableCell className="px-6 py-4 whitespace-nowrap" >{row.rentPrice}</TableCell>
                             <TableCell className="px-6 py-4 whitespace-nowrap" >{row.hasAc ? 'Yes' : 'No'}</TableCell>
                             <TableCell className="px-6 py-4 whitespace-nowrap" >{row.dateAvailable}</TableCell>
+                            {(type === 'all-flats') && 
+                                <TableCell className="px-6 py-4 whitespace-nowrap">
+                                {userMap[row.user]} {/* Muestra el nombre de usuario en lugar del userId */}
+                                </TableCell>
+                            }
                             {(type === 'all-flats' || type === 'favorite-flats') &&
                                 <TableCell className="px-6 py-4 whitespace-nowrap">
                                     {row.favorite ? <ThumbUpIcon style={{ color: '#29b6f6' }} onClick={() => removeFavorite(row.favorite)} /> : <ThumbUpOffAltIcon onClick={() => addFavorite(row.id)} />}
@@ -207,7 +260,8 @@ export default function FlatsTable({ type }) {
                             }
                             <TableCell className="px-6 py-4 whitespace-nowrap">
                                 <Button href={`/flat/${row.id}`} ><VisibilityIcon /></Button>
-                                {type === 'my-flats' && <Button href={`/flats/edit/${row.id}`} ><EditIcon /></Button>}
+                                {type === 'my-flats' && <Button href={`/flats/edit/${row.id}`} style={{color:'#00e676'}}><EditIcon /></Button>}
+                                {type === 'my-flats' && <Button onClick={() => deleteFlat(row.id)} style={{ color: 'red' }}><DeleteForeverIcon /></Button>}
                             </TableCell>
                         </TableRow>
                     ))}
