@@ -27,10 +27,12 @@ export default function Login() {
             if (!querySnapshot.empty) {
                 const user = querySnapshot.docs[0].data();
                 const userId = querySnapshot.docs[0].id;
+                console.log('mejoras',user)
 
                 if (user.password === passwordValue) {
                     console.log("Login success");
                     localStorage.setItem('user_logged', JSON.stringify(userId));
+                    localStorage.setItem('user_perfil', JSON.stringify(user));
                     setIsProgress(false);
                     navigate('/dashboard', { replace: true });
                     return;
