@@ -22,10 +22,12 @@ export default function UsersTable() {
     const [valueSlider, setValueSlider] = React.useState([18, 120]);
 
     const [users, setUsers] = useState([]);
+    let userLocal = localStorage.getItem('user_perfil');
+        let userRole = userLocal ? JSON.parse(userLocal).role : ''; // Obtener el rol del usuario del localStorage
+        console.log(userRole);
 
     const getData = async () => {
         let arrayWhere = [];
-        
         if (userType) {
             arrayWhere.push(where("role", "==", userType));
         }
@@ -177,8 +179,8 @@ export default function UsersTable() {
                                 <TableCell className="px-6 py-4 whitespace-nowrap" >{row.flats}</TableCell>
                                 <TableCell className="px-6 py-4 whitespace-nowrap" ><Button href={`/profile/edit/${row.id}`} ><EditIcon /></Button></TableCell>
                                 <TableCell className="px-6 py-4 whitespace-nowrap" >
-                                    {type === 'admin' && (
-                                        <Button onClick={() => handleDeleteUser(row.id)}>
+                                    { userRole === 'admin' && (
+                                        <Button style={{color:'red'}} onClick={() => handleDeleteUser(row.id)}>
                                             <DeleteForeverIcon />
                                         </Button>
                                     )}
