@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 body {
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
     background-image:url(../src/assets/img/atardecer.jpg);
     background-repeat: none;
     background-position: center;
@@ -12,11 +15,10 @@ body {
 
 p {
     color: rgb(248, 248, 243);
-    font-size: 20px;
+    font-size: 20%;
 }
 
 a {
     color: rgb(245, 245, 4);
 }
-
 

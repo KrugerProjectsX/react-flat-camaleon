@@ -4,7 +4,7 @@ export default function FlatsFavorites() {
     return (
         <div>
             <Header/>
-            <h1>Flats Favorites</h1>
+            <h1 style={{margin:"10px 60px"}}>Flats Favorites</h1>
             <FlatsTable type={'favorite-flats'}/>
         </div>
     );

@@ -8,8 +8,10 @@ export default function Home() {
     return (
         <div>
             <Header/>
-            <h1 className="uppercase">Home</h1>
+            <h1 className="uppercase" style={{ margin: '30px auto', height: '1px', width: '90%', fontSize: "30px", color: "white" }}>HOME</h1>
+            
             <FlatsTable type={'all-flats'}/>
+        
         </div>
     );
 }

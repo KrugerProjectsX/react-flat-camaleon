@@ -14,9 +14,19 @@ export default function Profile() {
     };
 
     return (
-        <div>
+        <div >
             <Header />
-            <div className="mt-8 flex flex-col ms-0 items-center bg-gray-100 bg-opacity-10">
+            <div style={{
+        display: "flex",
+              
+        margin: "40px auto",
+        width: "30%",
+        height: "650px",
+        backgroundColor: "255, 255, 255, 0.8",
+        padding: "15px",
+        borderRadius: "10px",
+        boxShadow: "0 2px 6px rgba(255 250 240)",
+      }}>
             <div className="max-w-md mx-auto p-6 border rounded bg-opacity-40 bg-white rounded-lg">
             <h1 className="text-center text-2xl font-semibold mb-2 uppercase">Profile</h1>
             {/* Botón para editar el perfil */}

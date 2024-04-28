@@ -12,10 +12,10 @@ export default function MyFlats() {
     }
 
     return (
-        <div>
+        <div >
             <Header />
-            <h1>My Flats</h1>
-            <Button onClick={createHandleMenuClick} variant="text">New Flats</Button>
+            <h1 style={{margin:"5px 30px 10px"}}>My Flats</h1>
+            <Button onClick={createHandleMenuClick} variant="text" style={{ backgroundColor: 'green', color: 'white', margin:"5px 60px 10px" }}>New Flats</Button>
             <FlatsTable type={'my-flats'} />
         </div>
     );
