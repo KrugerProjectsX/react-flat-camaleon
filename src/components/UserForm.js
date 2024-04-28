@@ -30,13 +30,17 @@ export default function UserForm({ type, userId }) {
     const emailRef = useRef('');
     const passwordRef = useRef('');
     const birthDateRef = useRef('');
-    const userTypeRef = useRef('landlords');
+    const userTypeRef = useRef('');
     const refCreate = collection(db, "users");
     const [showPassword, setShowPassword] = useState(false);
 
     let ref = null;
+    let userLocal = localStorage.getItem('user_perfil');
+    let userRole = userLocal ? JSON.parse(userLocal).role : ''; // Obtener el rol del usuario del localStorage
+    console.log(userRole);
     if (userId == null && type !== 'create') {
         userId = JSON.parse(localStorage.getItem('user_logged'));
+        console.log('userId',userId)
     }
     if (userId && type !== 'create') {
         ref = doc(db, "users", userId);
@@ -88,6 +92,8 @@ export default function UserForm({ type, userId }) {
             birthDate: birthDateRef.current.value,
             role: userTypeRef.current.value
         }
+
+        
         if (type === 'update') {
             // Elimina la contraseña del objeto userSend antes de la actualización
             delete userSend.password;
@@ -142,9 +148,9 @@ export default function UserForm({ type, userId }) {
                             const userId = querySnapshot.docs[0].id;
                             console.log("user", user);
                             console.log(userId)
-
                             localStorage.setItem('user_logged', JSON.stringify(userId));
-
+                            localStorage.setItem('user_perfil', JSON.stringify(user));
+                    
 
                             //navigate('/dashboard', { replace: true });
 
@@ -188,9 +194,10 @@ export default function UserForm({ type, userId }) {
                                     <TextField required disabled={type === 'view'} type='email' label='Email' inputRef={emailRef} defaultValue={user.email} variant='outlined' className="mb-4 w-full" InputProps={{ startAdornment: (<Icon><EmailOutlinedIcon /></Icon>) }} />
                                     {type === 'create' && <TextField type={showPassword ? "text" : "password"} label='Password' inputRef={passwordRef} variant='outlined' className="mb-4 w-full" InputProps={{ startAdornment: (<Icon><LockOutlinedIcon /></Icon>), endAdornment: (<Icon onClick={handleTogglePasswordVisibility}> {showPassword ? <VisibilityOff /> : <Visibility />}</Icon>) }} />}
                                     <TextField required disabled={type === 'view'} label='Birth Date' type='date' inputRef={birthDateRef} inputProps={{ min: maxBirthDate, max: minBirthDate }} defaultValue={user.birthDate} variant='outlined' className="mb-4 w-full" />
-                                    <TextField disabled={type === 'view'} select label="User Type" variant="outlined" SelectProps={{ native: true }} className="w-full mb-5" inputRef={userTypeRef}>
+                                    <TextField disabled={type === 'view'|| userRole !== 'admin'} select label="User Type" variant="outlined" SelectProps={{ native: true }} className="w-full mb-5" inputRef={userTypeRef} defaultValue={userTypeRef}>
                                         <option key="landlord" value="landlord">landlord</option>
                                         <option key="renter" value="renter">renter</option>
+                                        <option key="admin" value="admin">admin</option>
                                     </TextField>
                                     {type !== 'view' && <Button type='submit' className="bg-blue-500 text-white px-8 w-48 py-2 rounded hover:bg-blue-600">{nameButton}</Button>}
                                 </>
